@@ -1,7 +1,6 @@
 package sealey.javafxinventorysystem.models;
 
 /**
- *
  * @author Max Sealey
  */
 public abstract class Part {
@@ -20,6 +19,7 @@ public abstract class Part {
         this.max = max;
     }
 
+    // Getters and Setters
     /**
      * @return the id
      */
@@ -103,5 +103,4 @@ public abstract class Part {
     public void setMax(int max) {
         this.max = max;
     }
-    
 }
