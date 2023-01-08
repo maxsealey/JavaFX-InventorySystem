@@ -83,7 +83,7 @@
                         </GridPane>
                         <AnchorPane layoutY="256.0" prefHeight="35.0" prefWidth="500.0">
                             <children>
-                                <Button fx:id="cancelButton" layoutX="373.0" layoutY="5.0" mnemonicParsing="false" text="Cancel" />
+                                <Button fx:id="cancelButton" layoutX="373.0" layoutY="5.0" mnemonicParsing="false" onAction="#onActionCancel" text="Cancel" />
                                 <Button fx:id="saveButton" layoutX="304.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="57.0" text="Save" />
                             </children>
                         </AnchorPane>

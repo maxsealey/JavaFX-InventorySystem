@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="sealey.javafxinventorysystem.MainWindow">
    <children>
       <AnchorPane prefHeight="70.0" prefWidth="800.0">
@@ -39,17 +38,17 @@
                               <Font name="Arial Bold" size="11.0" />
                            </font>
                         </Label>
-                        <Button fx:id="addPartButton" layoutX="147.0" layoutY="228.0" mnemonicParsing="false" text="Add">
+                        <Button fx:id="addPartButton" layoutX="147.0" layoutY="228.0" mnemonicParsing="false" onAction="#onActionAddPart" text="Add">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Button>
-                        <Button fx:id="modifyPartButton" layoutX="193.0" layoutY="228.0" mnemonicParsing="false" text="Modify">
+                        <Button fx:id="modifyPartButton" layoutX="193.0" layoutY="228.0" mnemonicParsing="false" onAction="#onActionModifyPart" text="Modify">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Button>
-                        <Button fx:id="deletePartButton" layoutX="253.0" layoutY="228.0" mnemonicParsing="false" text="Delete">
+                        <Button fx:id="deletePartButton" layoutX="253.0" layoutY="228.0" mnemonicParsing="false" onAction="#onActionDeletePart" text="Delete">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
@@ -80,17 +79,17 @@
                               <Font name="Arial Bold" size="11.0" />
                            </font>
                         </Label>
-                        <Button fx:id="addProductButton" layoutX="147.0" layoutY="228.0" mnemonicParsing="false" text="Add">
+                        <Button fx:id="addProductButton" layoutX="147.0" layoutY="228.0" mnemonicParsing="false" onAction="#onActionAddProduct" text="Add">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Button>
-                        <Button fx:id="modifyProductButton" layoutX="193.0" layoutY="228.0" mnemonicParsing="false" text="Modify">
+                        <Button fx:id="modifyProductButton" layoutX="193.0" layoutY="228.0" mnemonicParsing="false" onAction="#onActionModifyProduct" text="Modify">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Button>
-                        <Button fx:id="deleteProductButton" layoutX="253.0" layoutY="228.0" mnemonicParsing="false" text="Delete">
+                        <Button fx:id="deleteProductButton" layoutX="253.0" layoutY="228.0" mnemonicParsing="false" onAction="#onActionDeleteProduct" text="Delete">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
@@ -108,7 +107,7 @@
       </AnchorPane>
       <AnchorPane layoutY="350.0" prefHeight="50.0" prefWidth="800.0">
          <children>
-            <Button fx:id="exitButton" layoutX="639.0" layoutY="14.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="51.0" text="Exit">
+            <Button fx:id="exitButton" layoutX="639.0" layoutY="14.0" mnemonicParsing="false" onAction="#onActionExit" prefHeight="23.0" prefWidth="51.0" text="Exit">
                <font>
                   <Font name="Arial" size="12.0" />
                </font>
