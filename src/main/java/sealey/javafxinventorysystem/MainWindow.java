@@ -10,7 +10,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import sealey.javafxinventorysystem.models.Inventory;
+import sealey.javafxinventorysystem.models.Part;
+import sealey.javafxinventorysystem.models.Product;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,58 +27,42 @@ public class MainWindow implements Initializable {
 
     @FXML
     private Button addPartButton;
-
     @FXML
     private Button addProductButton;
-
     @FXML
     private Button deletePartButton;
-
     @FXML
     private Button deleteProductButton;
-
     @FXML
     private Button exitButton;
-
     @FXML
     private Button modifyPartButton;
-
     @FXML
     private Button modifyProductButton;
 
     @FXML
-    private TableColumn<?, ?> partIDCol;
-
+    private TableColumn<Part, Integer> partIDCol;
     @FXML
-    private TableColumn<?, ?> partInvCol;
-
+    private TableColumn<Part, Integer> partInvCol;
     @FXML
-    private TableColumn<?, ?> partNameCol;
-
+    private TableColumn<Part, String> partNameCol;
     @FXML
-    private TableColumn<?, ?> partPriceCol;
-
+    private TableColumn<Part, Double> partPriceCol;
     @FXML
-    private TableView<?> partTable;
-
+    private TableView<Part> partTable;
     @FXML
-    private TableColumn<?, ?> productIDCol;
-
+    private TableColumn<Product, Integer> productIDCol;
     @FXML
-    private TableColumn<?, ?> productInvCol;
-
+    private TableColumn<Product, Integer> productInvCol;
     @FXML
-    private TableColumn<?, ?> productNameCol;
-
+    private TableColumn<Product, String> productNameCol;
     @FXML
-    private TableColumn<?, ?> productPriceCol;
-
+    private TableColumn<Product, Double> productPriceCol;
     @FXML
-    private TableView<?> productTable;
+    private TableView<Product> productTable;
 
     @FXML
     private TextField searchPartText;
-
     @FXML
     private TextField searchProductText;
 
@@ -131,6 +119,18 @@ public class MainWindow implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("initialized");
+
+        partTable.setItems(Inventory.getAllParts());
+        productTable.setItems(Inventory.getAllProducts());
+
+        partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        partInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        partPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        productIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        productNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        productInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 }
