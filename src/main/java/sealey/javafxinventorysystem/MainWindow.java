@@ -1,6 +1,9 @@
 package sealey.javafxinventorysystem;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -66,6 +69,79 @@ public class MainWindow implements Initializable {
     @FXML
     private TextField searchProductText;
 
+    boolean isInt(String str) {
+        try {
+            Integer.valueOf(str);
+            return true;
+        } catch (NumberFormatException e) { return false; }
+    }
+
+    private Part selectPart(int id) {
+        for(Part p : Inventory.getAllParts()){
+            if(p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+    private Product selectProduct(int id){
+        for(Product p : Inventory.getAllProducts()){
+            if(p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+    private ObservableList<Part> partFilter(String search){
+
+        ObservableList<Part> temp = FXCollections.observableArrayList();
+        if(search.isEmpty()) return Inventory.getAllParts();
+
+        for(Part p : Inventory.getAllParts()) {
+            if(p.getName().toLowerCase().contains(search.toLowerCase()))
+            {
+                temp.add(p);
+            }
+            if(isInt(search) && p.getId() == Integer.parseInt(search)) {
+                temp.add(p);
+            }
+        }
+        return temp;
+    }
+    private ObservableList<Product> productFilter(String search){
+
+        ObservableList<Product> temp = FXCollections.observableArrayList();
+        if(search.isEmpty()) return Inventory.getAllProducts();
+
+        for(Product p : Inventory.getAllProducts()) {
+            if(p.getName().toLowerCase().contains(search.toLowerCase()))
+            {
+                temp.add(p);
+            }
+            if(isInt(search) && p.getId() == Integer.parseInt(search)) {
+                temp.add(p);
+            }
+        }
+        return temp;
+    }
+    boolean deletePart(int id) {
+        for(Part p : Inventory.getAllParts()){
+            if(p.getId() == id) {
+                return Inventory.getAllParts().remove(p);
+            }
+        }
+
+        return false;
+    }
+    boolean deleteProduct(int id) {
+        for(Product p : Inventory.getAllProducts()){
+            if(p.getId() == id) {
+                return Inventory.getAllProducts().remove(p);
+            }
+        }
+        return false;
+    }
+
     @FXML
     void onActionAddPart(ActionEvent event) throws IOException {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
@@ -91,7 +167,7 @@ public class MainWindow implements Initializable {
 
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
-        System.out.println("Delete Part");
+        System.out.println("Delete Product");
     }
 
     @FXML
@@ -117,11 +193,9 @@ public class MainWindow implements Initializable {
         stage.show();
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        partTable.setItems(Inventory.getAllParts());
-        productTable.setItems(Inventory.getAllProducts());
+    void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
+        partTable.setItems(parts);
+        productTable.setItems(products);
 
         partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -132,5 +206,23 @@ public class MainWindow implements Initializable {
         productNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         productInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        displayData(Inventory.getAllParts(),Inventory.getAllProducts());
+        searchPartText.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                displayData(partFilter(searchPartText.getText()),productFilter(searchProductText.getText()));
+            }
+        });
+
+        searchProductText.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                displayData(partFilter(searchPartText.getText()),productFilter(searchProductText.getText()));
+            }
+        });
     }
 }
