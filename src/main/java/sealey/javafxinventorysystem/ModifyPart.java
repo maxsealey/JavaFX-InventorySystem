@@ -62,7 +62,31 @@ public class ModifyPart implements Initializable {
     private Button saveButton;
 
     @FXML
+    void onActionCompanyLabel(ActionEvent event) {
+        machineIDLabel.setText("Company Name");
+    }
+    @FXML
+    public void onActionMachineLabel(ActionEvent actionEvent) {
+        machineIDLabel.setText("Machine ID");
+    }
+
+    @FXML
     void onActionCancel(ActionEvent event) throws IOException {
+        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+        stage.setScene(new Scene(scene));
+        stage.show();
+    }
+    @FXML
+    void onActionSave(ActionEvent event) throws IOException {
+        /*int id = Integer.parseInt(partIDText.getText());
+        String name = partNameText.getText();
+        int inv = Integer.parseInt(inventoryText.getText());
+        double price = Double.parseDouble(priceText.getText());
+        int max = Integer.parseInt(maxText.getText());
+        int min = Integer.parseInt(minText.getText());
+        boolean isInHouse = !outsourcedRadio.isSelected();*/
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
         stage.setScene(new Scene(scene));
