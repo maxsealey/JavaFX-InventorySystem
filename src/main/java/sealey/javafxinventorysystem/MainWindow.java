@@ -96,15 +96,9 @@ public class MainWindow implements Initializable {
 
         ObservableList<Part> temp = FXCollections.observableArrayList();
         if(search.isEmpty()) return Inventory.getAllParts();
-
-        for(Part p : Inventory.getAllParts()) {
-            if(p.getName().toLowerCase().contains(search.toLowerCase()))
-            {
-                temp.add(p);
-            }
-            if(isInt(search) && p.getId() == Integer.parseInt(search)) {
-                temp.add(p);
-            }
+        temp = Inventory.lookupPart(search);
+        if(isInt(search)){
+            temp.add(Inventory.lookupPart(Integer.parseInt(search)));
         }
         return temp;
     }
@@ -112,34 +106,11 @@ public class MainWindow implements Initializable {
 
         ObservableList<Product> temp = FXCollections.observableArrayList();
         if(search.isEmpty()) return Inventory.getAllProducts();
-
-        for(Product p : Inventory.getAllProducts()) {
-            if(p.getName().toLowerCase().contains(search.toLowerCase()))
-            {
-                temp.add(p);
-            }
-            if(isInt(search) && p.getId() == Integer.parseInt(search)) {
-                temp.add(p);
-            }
+        temp = Inventory.lookupProduct(search);
+        if(isInt(search)){
+            temp.add(Inventory.lookupProduct(Integer.parseInt(search)));
         }
         return temp;
-    }
-    boolean deletePart(int id) {
-        for(Part p : Inventory.getAllParts()){
-            if(p.getId() == id) {
-                return Inventory.getAllParts().remove(p);
-            }
-        }
-
-        return false;
-    }
-    boolean deleteProduct(int id) {
-        for(Product p : Inventory.getAllProducts()){
-            if(p.getId() == id) {
-                return Inventory.getAllProducts().remove(p);
-            }
-        }
-        return false;
     }
 
     @FXML
