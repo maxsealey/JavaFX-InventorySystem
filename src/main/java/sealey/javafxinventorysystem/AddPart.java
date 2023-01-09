@@ -64,6 +64,29 @@ public class AddPart implements Initializable {
     @FXML
     private Button saveButton;
 
+    // Helper Functions
+    @FXML
+    boolean search(int id){
+        for(Part p : Inventory.getAllParts())
+        {
+            if(p.getId() == id){
+                return true;
+            }
+        }
+        return false;
+    }
+    int generateID() {
+        int id = 1;
+        for(Part a : Inventory.getAllParts()) {
+            if(search(id)){
+                id++;
+            } else {
+                return id;
+            }
+        }
+        return id;
+    }
+
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
@@ -73,7 +96,7 @@ public class AddPart implements Initializable {
     }
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
-        int id = Integer.parseInt(partIDText.getText());
+        int id = Integer.parseInt(partIDText.getPromptText());
         String name = partNameText.getText();
         int inv = Integer.parseInt(inventoryText.getText());
         double price = Double.parseDouble(priceText.getText());
@@ -108,6 +131,6 @@ public class AddPart implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("initialized");
+        partIDText.setPromptText(String.valueOf(generateID()));
     }
 }
