@@ -11,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import sealey.javafxinventorysystem.models.Part;
 
 import java.io.IOException;
 import java.net.URL;
@@ -55,37 +56,51 @@ public class AddProduct implements Initializable {
     private TextField searchPartText;
 
     @FXML
-    private TableView<?> table1;
+    private TableView<Part> table1;
 
     @FXML
-    private TableColumn<?, ?> table1IDCol;
+    private TableColumn<Part, Integer> table1IDCol;
 
     @FXML
-    private TableColumn<?, ?> table1InvCol;
+    private TableColumn<Part, Integer> table1InvCol;
 
     @FXML
-    private TableColumn<?, ?> table1NameCol;
+    private TableColumn<Part, String> table1NameCol;
 
     @FXML
-    private TableColumn<?, ?> table1PriceCol;
+    private TableColumn<Part, Double> table1PriceCol;
 
     @FXML
-    private TableView<?> table2;
+    private TableView<Part> table2;
 
     @FXML
-    private TableColumn<?, ?> table2IDCol;
+    private TableColumn<Part, Integer> table2IDCol;
 
     @FXML
-    private TableColumn<?, ?> table2InvCol;
+    private TableColumn<Part, Integer> table2InvCol;
 
     @FXML
-    private TableColumn<?, ?> table2NameCol;
+    private TableColumn<Part, String> table2NameCol;
 
     @FXML
-    private TableColumn<?, ?> table2PriceCol;
+    private TableColumn<Part, Double> table2PriceCol;
 
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
+        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+        stage.setScene(new Scene(scene));
+        stage.show();
+    }
+    @FXML
+    void onActionSave(ActionEvent event) throws IOException {
+        int id = Integer.parseInt(productIDText.getText());
+        String name = productNameText.getText();
+        int inv = Integer.parseInt(inventoryText.getText());
+        double price = Double.parseDouble(priceText.getText());
+        int max = Integer.parseInt(maxText.getText());
+        int min = Integer.parseInt(minText.getText());
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
         stage.setScene(new Scene(scene));

@@ -12,6 +12,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
+import sealey.javafxinventorysystem.models.InHouse;
+import sealey.javafxinventorysystem.models.Inventory;
+import sealey.javafxinventorysystem.models.OutSourced;
+import sealey.javafxinventorysystem.models.Part;
 
 import java.io.IOException;
 import java.net.URL;
@@ -67,15 +71,39 @@ public class AddPart implements Initializable {
         stage.setScene(new Scene(scene));
         stage.show();
     }
-
     @FXML
-    void onActionCompanyLabel(ActionEvent event) {
-        System.out.println("Change machine id label to company name");
+    void onActionSave(ActionEvent event) throws IOException {
+        int id = Integer.parseInt(partIDText.getText());
+        String name = partNameText.getText();
+        int inv = Integer.parseInt(inventoryText.getText());
+        double price = Double.parseDouble(priceText.getText());
+        int max = Integer.parseInt(maxText.getText());
+        int min = Integer.parseInt(minText.getText());
+        boolean isInHouse = !outsourcedRadio.isSelected();
+
+        if(isInHouse){
+            InHouse newPart = new InHouse(id,name,price,inv,max,min);
+            newPart.setMachineId(Integer.parseInt(machineIDText.getText()));
+            Inventory.addPart(newPart);
+        } else {
+            OutSourced newPart = new OutSourced(id,name,price,inv,max,min);
+            newPart.setCompanyName(machineIDText.getText());
+            Inventory.addPart(newPart);
+        }
+
+        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+        stage.setScene(new Scene(scene));
+        stage.show();
     }
 
     @FXML
-    void onActionSave(ActionEvent event) {
-        System.out.println("Save button pressed");
+    void onActionCompanyLabel(ActionEvent event) {
+        machineIDLabel.setText("Company Name");
+    }
+    @FXML
+    public void onActionMachineLabel(ActionEvent actionEvent) {
+        machineIDLabel.setText("Machine ID");
     }
 
     @Override

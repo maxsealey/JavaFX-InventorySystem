@@ -62,7 +62,7 @@
                                  </columnResizePolicy>
                               </TableView>
                               <Button fx:id="cancelButton" layoutX="226.0" layoutY="387.0" mnemonicParsing="false" onAction="#onActionCancel" text="Cancel" />
-                              <Button fx:id="saveButton" layoutX="133.0" layoutY="387.0" mnemonicParsing="false" text="Save" />
+                              <Button fx:id="saveButton" layoutX="133.0" layoutY="387.0" mnemonicParsing="false" onAction="#onActionSave" text="Save" />
                               <Button fx:id="removeButton" layoutX="135.0" layoutY="353.0" mnemonicParsing="false" text="Remove Associated Part" />
                            </children>
                         </AnchorPane>
@@ -80,7 +80,7 @@
                                  <children>
                                     <Label text="ID" />
                                     <Label text="Name" GridPane.rowIndex="1" />
-                                    <TextField fx:id="productIDText" prefHeight="30.0" prefWidth="145.0" GridPane.columnIndex="1" />
+                                    <TextField fx:id="productIDText" disable="true" editable="false" prefHeight="30.0" prefWidth="145.0" GridPane.columnIndex="1" />
                                     <TextField fx:id="productNameText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
