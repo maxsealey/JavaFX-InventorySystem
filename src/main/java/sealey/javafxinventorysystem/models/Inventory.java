@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 * */
 
 public class Inventory {
+
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
 
@@ -22,6 +23,7 @@ public class Inventory {
     * @return allParts List of parts in the inventory
     * */
     public static ObservableList<Part> getAllParts() {
+
         return allParts;
     }
 
@@ -32,6 +34,7 @@ public class Inventory {
      * @param allParts List of parts to be stored in the inventory
      * */
     public static void setAllParts(ObservableList<Part> allParts) {
+
         Inventory.allParts = allParts;
     }
 
@@ -42,6 +45,7 @@ public class Inventory {
      * @return allProducts List of products in the inventory
      * */
     public static ObservableList<Product> getAllProducts() {
+
         return allProducts;
     }
 
@@ -52,6 +56,7 @@ public class Inventory {
      * @param allParts List of parts to be stored in the inventory
      * */
     public static void setAllProducts(ObservableList<Product> allProducts) {
+
         Inventory.allProducts = allProducts;
     }
 
@@ -61,6 +66,7 @@ public class Inventory {
     * @param part Part to be added to list
     * */
     public static void addPart(Part part) {
+
         allParts.add(part);
     }
 
@@ -70,6 +76,7 @@ public class Inventory {
     * @param product Product to be added to list
     * */
     public static void addProduct(Product product) {
+
         allProducts.add(product);
     }
 
@@ -80,6 +87,7 @@ public class Inventory {
     * @return a Parts object with matching id number or null  (if not found)
     * */
     public static Part lookupPart(int partID) {
+
         for(Part a : getAllParts()) {
             if(a.getId() == partID){ return a; }
         }
@@ -93,6 +101,7 @@ public class Inventory {
      * @return a Product object with matching id number or null  (if not found)
      * */
     public static Product lookupProduct(int prodID) {
+
         for(Product a : getAllProducts()) {
             if(a.getId() == prodID){ return a; }
         }
@@ -107,6 +116,7 @@ public class Inventory {
     * @return temp List of parts where the search term is contained in the part's name
     * */
     public static ObservableList<Part> lookupPart(String partName) {
+
         ObservableList<Part> temp = FXCollections.observableArrayList();
 
         for(Part p : Inventory.getAllParts()) {
@@ -126,6 +136,7 @@ public class Inventory {
      * @return temp List of products where the search term is contained in the product's name
      * */
     public static ObservableList<Product> lookupProduct(String productName) {
+
         ObservableList<Product> temp = FXCollections.observableArrayList();
 
         for(Product p : Inventory.getAllProducts()) {
@@ -146,13 +157,23 @@ public class Inventory {
     *
     * */
     public static void updatePart(Part part) {
-        for(Part a : getAllParts()) {
-            if(a.getId() == part.getId()) {
-                a.setName(part.getName());
-                a.setPrice(part.getPrice());
-                a.setStock(part.getStock());
-                a.setMax(part.getMax());
-                a.setMin(part.getMin());
+
+        for(Part p : Inventory.getAllParts())
+        {
+            if(p.getId() == part.getId())
+            {
+                if(part instanceof InHouse){
+
+                } else {
+                    ((OutSourced) p).setCompanyName(((OutSourced) part).getCompanyName());
+                }
+                p.setId(part.getId());
+                p.setName(part.getName());
+                p.setPrice(part.getPrice());
+                p.setStock(part.getStock());
+                p.setMin(part.getMin());
+                p.setMax(part.getMax());
+                return;
             }
         }
     }
@@ -166,15 +187,7 @@ public class Inventory {
      *
      * */
     public static void updateProduct(Product product) {
-        for(Product a : getAllProducts()) {
-            if(a.getId() == product.getId()) {
-                a.setName(product.getName());
-                a.setPrice(product.getPrice());
-                a.setStock(product.getStock());
-                a.setMax(product.getMax());
-                a.setMin(product.getMin());
-            }
-        }
+
     }
 
     /*
@@ -184,7 +197,8 @@ public class Inventory {
     * @return boolean True if successful, False if unsuccessful
     * */
     public static boolean deletePart(Part part) {
-        return (Boolean)Inventory.getAllParts().remove(part);
+
+        return Inventory.getAllParts().remove(part);
     }
 
     /*
@@ -194,6 +208,7 @@ public class Inventory {
      * @return boolean True if successful, False if unsuccessful
      * */
     public static boolean deleteProduct(Product product) {
-        return (Boolean)Inventory.getAllProducts().remove(product);
+
+        return Inventory.getAllProducts().remove(product);
     }
 }
