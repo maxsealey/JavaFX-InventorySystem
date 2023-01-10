@@ -24,6 +24,14 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/*
+* @author Max Sealey
+*
+* The MainWindow controller controls the components of the initial scene, which acts as the "home page" for the
+* application. It displays the Parts and Products tables, and for each respective table buttons to switch to
+* Add and Modify scenes, a button to delete an item, and a search bar. It also contains a button to exit the application.
+* */
+
 public class MainWindow implements Initializable {
     Stage stage;
     Parent scene;
@@ -69,6 +77,12 @@ public class MainWindow implements Initializable {
     @FXML
     private TextField searchProductText;
 
+    /*
+    * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
+    *
+    * @param str The string to be checked
+    * @return boolean Returns true if string is also an integer, false if exception is caught
+    */
     boolean isInt(String str) {
         try {
             Integer.valueOf(str);
@@ -76,22 +90,16 @@ public class MainWindow implements Initializable {
         } catch (NumberFormatException e) { return false; }
     }
 
-    private Part selectPart(int id) {
-        for(Part p : Inventory.getAllParts()){
-            if(p.getId() == id) {
-                return p;
-            }
-        }
-        return null;
-    }
-    private Product selectProduct(int id){
-        for(Product p : Inventory.getAllProducts()){
-            if(p.getId() == id) {
-                return p;
-            }
-        }
-        return null;
-    }
+    /*
+    * The partFilter() method checks a string input (the text retrieved from the searchPartText TextField)
+    * and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
+    * Returns an ObservableList containing all parts if the TextField is empty. If the search term does not
+    * find any matches, error message is displayed in dialog box.
+    *
+    * @param search String retrieved from searchPartText
+    * @return ObservableList of Parts containing all parts whose name contains the search parameter
+    * and/or whose id is equal to the search parameter, or list of all Parts.
+    * */
     private ObservableList<Part> partFilter(String search){
 
         ObservableList<Part> temp = FXCollections.observableArrayList();
@@ -102,6 +110,17 @@ public class MainWindow implements Initializable {
         }
         return temp;
     }
+
+    /*
+     * The productFilter() method checks a string input (the text retrieved from the searchProductText TextField)
+     * and returns a list of Products whose name contains the string, and/or whose ID is equal to the string.
+     * Returns an ObservableList containing all products if the TextField is empty. If the search term does not
+     * find any matches, error message is displayed in dialog box.
+     *
+     * @param search String retrieved from searchProductText
+     * @return ObservableList of Products containing all products whose name contains the search parameter
+     * and/or whose id is equal to the search parameter, or list of all Products.
+     * */
     private ObservableList<Product> productFilter(String search){
 
         ObservableList<Product> temp = FXCollections.observableArrayList();
@@ -113,6 +132,12 @@ public class MainWindow implements Initializable {
         return temp;
     }
 
+    /*
+    * The onActionAddPart() event handler sets the AddPart scene when the Add Button under the parts table is clicked.
+    *
+    * @param event ActionEvent object for the Add button
+    * @throws IOException Throws error message if there is an issue with the event
+    * */
     @FXML
     void onActionAddPart(ActionEvent event) throws IOException {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
@@ -122,6 +147,12 @@ public class MainWindow implements Initializable {
         stage.show();
     }
 
+    /*
+     * The onActionAddProduct() event handler sets the AddProduct scene when the Add Button under the products table is clicked.
+     *
+     * @param event ActionEvent object for the Add button
+     * @throws IOException Throws error message if there is an issue with the event
+     * */
     @FXML
     void onActionAddProduct(ActionEvent event) throws IOException {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
@@ -131,21 +162,46 @@ public class MainWindow implements Initializable {
         stage.show();
     }
 
+    /*
+    * The onActionDeletePart() event handler deletes the selected part(s) when delete button is clicked.
+    * If an item is not selected or deleted, a dialog box displays an error message.
+    *
+    * @param event ActionEvent object for the Delete button
+    * @throws IOException Throws error message if there is an issue with the event
+    * */
     @FXML
     void onActionDeletePart(ActionEvent event) {
         System.out.println("Delete Part");
     }
 
+    /*
+     * The onActionDeleteProduct() event handler deletes the selected product(s) when delete button is clicked.
+     * If an item is not selected or deleted, a dialog box displays an error message.
+     *
+     * @param event ActionEvent object for the Delete button
+     * @throws IOException Throws error message if there is an issue with the event
+     * */
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
         System.out.println("Delete Product");
     }
 
+    /*
+     * The onActionExit() event handler closes the application when exit button is clicked.
+     *
+     * @param event ActionEvent object for the Exit button
+     * */
     @FXML
     void onActionExit(ActionEvent event) {
         System.exit(0);
     }
 
+    /*
+     * The onActionModifyPart() event handler sets the ModifyPart scene when the Modify Button under the parts table is clicked.
+     *
+     * @param event ActionEvent object for the Modify button
+     * @throws IOException Throws error message if there is an issue with the event
+     * */
     @FXML
     void onActionModifyPart(ActionEvent event) throws IOException {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
@@ -155,6 +211,12 @@ public class MainWindow implements Initializable {
         stage.show();
     }
 
+    /*
+     * The onActionModifyProduct() event handler sets the ModifyProduct scene when the Modify Button under the products table is clicked.
+     *
+     * @param event ActionEvent object for the Modify button
+     * @throws IOException Throws error message if there is an issue with the event
+     * */
     @FXML
     void onActionModifyProduct(ActionEvent event) throws IOException {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
@@ -164,6 +226,12 @@ public class MainWindow implements Initializable {
         stage.show();
     }
 
+    /*
+    * The displayData() method sets the values to be displayed in both tables.
+    *
+    * @param parts ObservableList of parts to be displayed in Parts table
+    * @param products ObservableList of products to be displayed in Products table
+    * */
     void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
         partTable.setItems(parts);
         productTable.setItems(products);
@@ -179,6 +247,14 @@ public class MainWindow implements Initializable {
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
+    /*
+    * The initialize() method is called when MainWindow controller is initialized. It displays all products currently in the inventory,
+    * and then sets event listeners on the search bar TextFields. When the search field is selected and the 'enter' button is clicked,
+    * the event handler is fired and the table is updated.
+    *
+    * @param url location used to resolve relative paths for the root object, or null
+    * @param resourceBundle resources used to localize root object or null
+    * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayData(Inventory.getAllParts(),Inventory.getAllProducts());

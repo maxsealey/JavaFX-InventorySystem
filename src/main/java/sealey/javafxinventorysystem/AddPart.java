@@ -22,6 +22,15 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/*
+ * @author Max Sealey
+ *
+ * The AddPart controller controls the components for the AddPart scene, and displays radio buttons to indicate whether the created item is In-House or Outsourced,
+ * a disabled TextField containing an auto-generated unique ID #, and TextFields for the item's name, inventory amount, price, max items possible, min items possible,
+ * and either the machine ID (when In-House radio button is selected) or company name (when Outsourced radio button is selected). Below that is the save button and the
+ * cancel button, both of which navigate back to the MainWindow, though only the save button adds the entered data into the table (upon input validation).
+ * */
+
 public class AddPart implements Initializable {
     Stage stage;
     Parent scene;
@@ -64,8 +73,13 @@ public class AddPart implements Initializable {
     @FXML
     private Button saveButton;
 
-    // Helper Functions
-    @FXML
+    /*
+    * The search() method is a helper function that returns a boolean indicating whether an integer is already being used as an ID number for an existing part.
+    * This is only called in the generateID() method to ensure that the auto-generated ID is unique.
+    *
+    * @param id Integer to be checked for ID uniqueness
+    * @return boolean True if ID belongs to existing part, False otherwise
+    * */
     boolean search(int id){
         for(Part p : Inventory.getAllParts())
         {
@@ -75,6 +89,12 @@ public class AddPart implements Initializable {
         }
         return false;
     }
+
+    /*
+     * The generateID() method is a helper function that generates an ID number for created part. Always returns the next unique integer in sequential order
+     *
+     * @return id Integer that is either 1 (if List is empty), or the next unique integer
+     * */
     int generateID() {
         int id = 1;
         for(Part a : Inventory.getAllParts()) {
@@ -87,6 +107,12 @@ public class AddPart implements Initializable {
         return id;
     }
 
+    /*
+    * The onActionCancel() event handler navigates back to the MainWindow without adding any data to Inventory When the Cancel button is clicked.
+    *
+    * @param event ActionEvent object for the Cancel button
+    * @throws IOException Throws error message if there is an issue with the event
+    * */
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
@@ -94,6 +120,13 @@ public class AddPart implements Initializable {
         stage.setScene(new Scene(scene));
         stage.show();
     }
+
+    /*
+     * The onActionSave() event handler checks for valid input when the Save button is clicked, and if valid, adds Part to Inventory and navigates back to the MainWindow.
+     *
+     * @param event ActionEvent object for the Save button
+     * @throws IOException Throws error message if there is an issue with the event
+     * */
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
         int id = Integer.parseInt(partIDText.getPromptText());
@@ -120,15 +153,33 @@ public class AddPart implements Initializable {
         stage.show();
     }
 
+    /*
+    * When the In-House radio button is selected, the Machine ID label is displayed.
+    *
+    * @param event ActionEvent object for the In-House radio button
+    * */
     @FXML
     void onActionCompanyLabel(ActionEvent event) {
         machineIDLabel.setText("Company Name");
     }
+
+    /*
+     * When the Outsourced radio button is selected, the Company Name label is displayed.
+     *
+     * @param event ActionEvent object for the Outsourced radio button
+     * */
     @FXML
     public void onActionMachineLabel(ActionEvent actionEvent) {
         machineIDLabel.setText("Machine ID");
     }
 
+    /*
+    * The initialize() method is called when the AddPart controller is initialized. The prompt text property of the disabled partIDText TextField
+    * is set to an auto-generated ID number.
+    *
+    * @param url location used to resolve relative paths for the root object, or null
+    * @param resourceBundle resources used to localize root object or null
+    * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         partIDText.setPromptText(String.valueOf(generateID()));
