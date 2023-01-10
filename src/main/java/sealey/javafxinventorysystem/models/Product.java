@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
  * add a part, delete a part, and retrieve the entire list.
  * */
 public class Product {
+
     private static ObservableList<Part> associatedParts;
     private int id;
     private String name;
@@ -25,6 +26,7 @@ public class Product {
     * Product class constructor, called when a Product object is created. Assigns initial values.
     * */
     public Product(int id, String name, double price, int stock, int min, int max) {
+
         this.id = id;
         this.name = name;
         this.price = price;
@@ -37,6 +39,7 @@ public class Product {
      * @return id the id to get
      */
     public int getId() {
+
         return id;
     }
 
@@ -44,6 +47,7 @@ public class Product {
      * @param id the id to set
      */
     public void setId(int id) {
+
         this.id = id;
     }
 
@@ -51,6 +55,7 @@ public class Product {
      * @return name the name to get
      */
     public String getName() {
+
         return name;
     }
 
@@ -58,6 +63,7 @@ public class Product {
      * @param name the name to set
      */
     public void setName(String name) {
+
         this.name = name;
     }
 
@@ -65,6 +71,7 @@ public class Product {
      * @return price the price to get
      */
     public double getPrice() {
+
         return price;
     }
 
@@ -72,6 +79,7 @@ public class Product {
      * @param price the price to set
      */
     public void setPrice(double price) {
+
         this.price = price;
     }
 
@@ -79,6 +87,7 @@ public class Product {
      * @return stock the stock to get
      */
     public int getStock() {
+
         return stock;
     }
 
@@ -86,6 +95,7 @@ public class Product {
      * @param stock the stock to set
      */
     public void setStock(int stock) {
+
         this.stock = stock;
     }
 
@@ -93,6 +103,7 @@ public class Product {
      * @return min the min to get
      */
     public int getMin() {
+
         return min;
     }
 
@@ -100,6 +111,7 @@ public class Product {
      * @param min the min to set
      */
     public void setMin(int min) {
+
         this.min = min;
     }
 
@@ -107,6 +119,7 @@ public class Product {
      * @return max the max to get
      */
     public int getMax() {
+
         return max;
     }
 
@@ -114,6 +127,7 @@ public class Product {
      * @param max the max to set
      */
     public void setMax(int max) {
+
         this.max = max;
     }
 
@@ -121,6 +135,7 @@ public class Product {
     * @return associatedParts The entire list of parts associated with the product
     * */
     public static ObservableList<Part> getAllAssociatedParts() {
+
         return associatedParts;
     }
 
@@ -130,6 +145,7 @@ public class Product {
     * @param part Part object to be added to list
     * */
     public static void addAssociatedPart(Part part) {
+
         associatedParts.add(part);
     }
 
@@ -141,6 +157,7 @@ public class Product {
     * @return boolean True if successful, False if unsuccessful
     * */
     public static boolean deleteAssociatedPart(Part selectedAssociatedPart) {
+
         return (Boolean)associatedParts.remove(selectedAssociatedPart);
     }
 }

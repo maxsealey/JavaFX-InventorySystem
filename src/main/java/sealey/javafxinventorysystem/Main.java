@@ -26,6 +26,7 @@ public class Main extends Application {
     * */
     @Override
     public void start(Stage stage) throws IOException {
+
         testData();
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MainWindow.fxml"));
@@ -36,6 +37,7 @@ public class Main extends Application {
     }
 
     private static void testData() {
+
         OutSourced part1 = new OutSourced(1, "wheel", 34.99, 16, 5, 30);
         OutSourced part2 = new OutSourced(2, "brake", 29.99, 18, 10, 25);
         InHouse part3 = new InHouse(3, "handlebars", 39.99, 5, 5, 15);
@@ -62,6 +64,7 @@ public class Main extends Application {
     * @param args String arguments that may be passed in. Will not be utilized in this program.
     * */
     public static void main(String[] args) {
+
         launch(args);
     }
 }

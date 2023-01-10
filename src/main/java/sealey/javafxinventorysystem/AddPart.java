@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
  * */
 
 public class AddPart implements Initializable {
+
     Stage stage;
     Parent scene;
     @FXML
@@ -81,6 +82,7 @@ public class AddPart implements Initializable {
     * @return boolean True if ID belongs to existing part, False otherwise
     * */
     boolean search(int id){
+
         for(Part p : Inventory.getAllParts())
         {
             if(p.getId() == id){
@@ -96,6 +98,7 @@ public class AddPart implements Initializable {
      * @return id Integer that is either 1 (if List is empty), or the next unique integer
      * */
     int generateID() {
+
         int id = 1;
         for(Part a : Inventory.getAllParts()) {
             if(search(id)){
@@ -115,9 +118,11 @@ public class AddPart implements Initializable {
     * */
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
         stage.setScene(new Scene(scene));
+        stage.setTitle("Inventory Management System");
         stage.show();
     }
 
@@ -129,6 +134,7 @@ public class AddPart implements Initializable {
      * */
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
+
         int id = Integer.parseInt(partIDText.getPromptText());
         String name = partNameText.getText();
         int inv = Integer.parseInt(inventoryText.getText());
@@ -150,6 +156,7 @@ public class AddPart implements Initializable {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
         stage.setScene(new Scene(scene));
+        stage.setTitle("Inventory Management System");
         stage.show();
     }
 
@@ -160,6 +167,7 @@ public class AddPart implements Initializable {
     * */
     @FXML
     void onActionCompanyLabel(ActionEvent event) {
+
         machineIDLabel.setText("Company Name");
     }
 
@@ -170,6 +178,7 @@ public class AddPart implements Initializable {
      * */
     @FXML
     public void onActionMachineLabel(ActionEvent actionEvent) {
+
         machineIDLabel.setText("Machine ID");
     }
 
@@ -182,6 +191,7 @@ public class AddPart implements Initializable {
     * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         partIDText.setPromptText(String.valueOf(generateID()));
     }
 }
