@@ -33,6 +33,7 @@ import java.util.ResourceBundle;
 * */
 
 public class MainWindow implements Initializable {
+
     Stage stage;
     Parent scene;
 
@@ -84,6 +85,7 @@ public class MainWindow implements Initializable {
     * @return boolean Returns true if string is also an integer, false if exception is caught
     */
     boolean isInt(String str) {
+
         try {
             Integer.valueOf(str);
             return true;
@@ -91,45 +93,55 @@ public class MainWindow implements Initializable {
     }
 
     /*
-    * The partFilter() method checks a string input (the text retrieved from the searchPartText TextField)
-    * and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
-    * Returns an ObservableList containing all parts if the TextField is empty. If the search term does not
-    * find any matches, error message is displayed in dialog box.
-    *
-    * @param search String retrieved from searchPartText
-    * @return ObservableList of Parts containing all parts whose name contains the search parameter
-    * and/or whose id is equal to the search parameter, or list of all Parts.
-    * */
-    private ObservableList<Part> partFilter(String search){
+     * The filterParts() method checks a string input (searchPartText TextField)
+     * and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
+     * Returns an ObservableList containing all parts if the TextField is empty. If the search term does not
+     * find any matches, error message is displayed in dialog box.
+     *
+     * @param search String retrieved from searchPartText
+     * @return ObservableList of Parts containing all parts whose name contains the search parameter
+     * and/or whose id is equal to the search parameter, or list of all Parts.
+     * */
+    ObservableList<Part> filterParts(){
 
-        ObservableList<Part> temp = FXCollections.observableArrayList();
-        if(search.isEmpty()) return Inventory.getAllParts();
-        temp = Inventory.lookupPart(search);
+        String search = searchPartText.getText();
+        ObservableList<Part> temp =  Inventory.lookupPart(search);
+
         if(isInt(search)){
             temp.add(Inventory.lookupPart(Integer.parseInt(search)));
         }
-        return temp;
+
+        if(temp.isEmpty()){
+            return Inventory.getAllParts();
+        } else {
+            return temp;
+        }
     }
 
     /*
-     * The productFilter() method checks a string input (the text retrieved from the searchProductText TextField)
+     * The filterProducts() method checks a string input (searchProductText TextField)
      * and returns a list of Products whose name contains the string, and/or whose ID is equal to the string.
      * Returns an ObservableList containing all products if the TextField is empty. If the search term does not
      * find any matches, error message is displayed in dialog box.
      *
      * @param search String retrieved from searchProductText
-     * @return ObservableList of Products containing all products whose name contains the search parameter
+     * @return temp ObservableList of Products containing all products whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Products.
      * */
-    private ObservableList<Product> productFilter(String search){
+    ObservableList<Product> filterProducts(){
 
-        ObservableList<Product> temp = FXCollections.observableArrayList();
-        if(search.isEmpty()) return Inventory.getAllProducts();
-        temp = Inventory.lookupProduct(search);
+        String search = searchProductText.getText();
+        ObservableList<Product> temp =  Inventory.lookupProduct(search);
+
         if(isInt(search)){
             temp.add(Inventory.lookupProduct(Integer.parseInt(search)));
         }
-        return temp;
+
+        if(temp.isEmpty()){
+            return Inventory.getAllProducts();
+        } else {
+            return temp;
+        }
     }
 
     /*
@@ -140,6 +152,7 @@ public class MainWindow implements Initializable {
     * */
     @FXML
     void onActionAddPart(ActionEvent event) throws IOException {
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddPart.fxml")));
         stage.setScene(new Scene(scene));
@@ -155,6 +168,7 @@ public class MainWindow implements Initializable {
      * */
     @FXML
     void onActionAddProduct(ActionEvent event) throws IOException {
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddProduct.fxml")));
         stage.setScene(new Scene(scene));
@@ -171,7 +185,8 @@ public class MainWindow implements Initializable {
     * */
     @FXML
     void onActionDeletePart(ActionEvent event) {
-        System.out.println("Delete Part");
+
+        Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
     }
 
     /*
@@ -183,7 +198,8 @@ public class MainWindow implements Initializable {
      * */
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
-        System.out.println("Delete Product");
+
+        Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
     }
 
     /*
@@ -193,6 +209,7 @@ public class MainWindow implements Initializable {
      * */
     @FXML
     void onActionExit(ActionEvent event) {
+
         System.exit(0);
     }
 
@@ -204,8 +221,16 @@ public class MainWindow implements Initializable {
      * */
     @FXML
     void onActionModifyPart(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Objects.requireNonNull(getClass().getResource("ModifyPart.fxml")));
+        loader.load();
+
+        ModifyPart modPartController = loader.getController();
+        modPartController.sendPart(partTable.getSelectionModel().getSelectedItem());
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyPart.fxml")));
+        scene = loader.getRoot();
         stage.setScene(new Scene(scene));
         stage.setTitle("Modify Part");
         stage.show();
@@ -219,6 +244,7 @@ public class MainWindow implements Initializable {
      * */
     @FXML
     void onActionModifyProduct(ActionEvent event) throws IOException {
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProduct.fxml")));
         stage.setScene(new Scene(scene));
@@ -233,6 +259,7 @@ public class MainWindow implements Initializable {
     * @param products ObservableList of products to be displayed in Products table
     * */
     void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
+
         partTable.setItems(parts);
         productTable.setItems(products);
 
@@ -257,18 +284,20 @@ public class MainWindow implements Initializable {
     * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         displayData(Inventory.getAllParts(),Inventory.getAllProducts());
         searchPartText.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                displayData(partFilter(searchPartText.getText()),productFilter(searchProductText.getText()));
+                displayData(filterParts(), filterProducts());
             }
         });
 
         searchProductText.setOnAction(new EventHandler<ActionEvent>() {
+
             @Override
             public void handle(ActionEvent actionEvent) {
-                displayData(partFilter(searchPartText.getText()),productFilter(searchProductText.getText()));
+                displayData(filterParts(), filterProducts());
             }
         });
     }
