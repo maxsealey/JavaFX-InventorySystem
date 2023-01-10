@@ -1,5 +1,7 @@
 package sealey.javafxinventorysystem;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +22,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ModifyProduct implements Initializable {
+
     Stage stage;
     Parent scene;
 
@@ -88,6 +91,7 @@ public class ModifyProduct implements Initializable {
 
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
         stage.setScene(new Scene(scene));
@@ -95,12 +99,16 @@ public class ModifyProduct implements Initializable {
     }
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
+
         int id = Integer.parseInt(productIDText.getText());
         String name = productNameText.getText();
         int inv = Integer.parseInt(inventoryText.getText());
         double price = Double.parseDouble(priceText.getText());
         int max = Integer.parseInt(maxText.getText());
         int min = Integer.parseInt(minText.getText());
+//        Part temp = new Part() {
+//        }
+
 
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
@@ -110,6 +118,7 @@ public class ModifyProduct implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         System.out.println("initialized");
     }
 }
