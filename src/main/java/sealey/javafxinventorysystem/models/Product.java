@@ -14,7 +14,7 @@ import javafx.collections.ObservableList;
  * */
 public class Product {
 
-    private static ObservableList<Part> associatedParts;
+    private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
     private int id;
     private String name;
     private double price;
@@ -145,7 +145,6 @@ public class Product {
     * @param part Part object to be added to list
     * */
     public void addAssociatedPart(Part part) {
-
         associatedParts.add(part);
     }
 
