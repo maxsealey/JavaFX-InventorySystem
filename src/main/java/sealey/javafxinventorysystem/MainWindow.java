@@ -262,20 +262,20 @@ public class MainWindow implements Initializable {
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
 
-        boolean success = false;
         try {
-            if(productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()) {
-                if(!productTable.getSelectionModel().isEmpty() && confirmation()) {
-                    success = Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+            if(!productTable.getSelectionModel().isEmpty()) {
+                if (productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty() && confirmation()) {
+                    Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+                } else if (!productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()){
+                    couldNotDelete("You must remove the parts associated with this product in order to delete it.");
+                    throw new NoSuchElementException();
                 }
             } else {
-                couldNotDelete("You must remove the parts associated with this product in order to delete it.");
-            }
-            if(!success) {
-                couldNotDelete("We were unable to delete a product.");
+                couldNotDelete("Please select a product.");
+                throw new NoSuchElementException();
             }
         } catch (NoSuchElementException e) {
-            couldNotDelete("We did not delete the product.");
+            return;
         }
     }
 

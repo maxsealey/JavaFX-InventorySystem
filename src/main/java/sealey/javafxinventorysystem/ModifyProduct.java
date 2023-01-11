@@ -249,11 +249,9 @@ public class ModifyProduct implements Initializable {
                 if(!checkStockValues(min,max,inv)){
                     throw new NumberFormatException();
                 } else {
-                    /*
-                    *
-                    * SAVE PRODUCT
-                    *
-                    * */
+                    Product temp = new Product(id,name,price,inv,min,max);
+                    temp.getAllAssociatedParts().setAll(bottomTable);
+                    Inventory.updateProduct(id-1,temp);
 
                     stage = (Stage)((Button)event.getSource()).getScene().getWindow();
                     scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));

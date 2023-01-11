@@ -136,13 +136,12 @@ public class ModifyPart implements Initializable {
                     if(inhouseRadio.isSelected()){
                         InHouse newPart = new InHouse(id,name,price,inv,max,min);
                         newPart.setMachineId(Integer.parseInt(machineIDText.getText()));
-                        Inventory.addPart(newPart);
+                        Inventory.updatePart(id,newPart);
                     } else {
                         OutSourced newPart = new OutSourced(id,name,price,inv,max,min);
                         newPart.setCompanyName(machineIDText.getText());
-                        Inventory.addPart(newPart);
+                        Inventory.updatePart(id,newPart);
                     }
-
                     stage = (Stage)((Button)event.getSource()).getScene().getWindow();
                     scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
                     stage.setScene(new Scene(scene));

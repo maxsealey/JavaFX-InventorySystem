@@ -153,8 +153,8 @@ public class Inventory {
         allParts.set(index, selectedPart);
     }
 
-    public static void updateProduct(Product product) {
-        allProducts.set(product.getId(), product);
+    public static void updateProduct(int index, Product product) {
+        allProducts.set(index, product);
     }
 
     /*
