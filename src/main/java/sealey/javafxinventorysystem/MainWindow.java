@@ -9,10 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sealey.javafxinventorysystem.models.Inventory;
@@ -79,12 +76,23 @@ public class MainWindow implements Initializable {
     private TextField searchProductText;
 
     /*
+    * notFound() shows a 404 alert dialog box. Called in the filter methods
+    * */
+    private void notFound() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("404");
+        alert.setContentText("Your search did not match any results. Please try again.");
+        alert.setHeaderText("Not Found");
+        alert.showAndWait();
+    }
+
+    /*
     * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
     *
     * @param str The string to be checked
     * @return boolean Returns true if string is also an integer, false if exception is caught
     */
-    boolean isInt(String str) {
+    private boolean isInt(String str) {
 
         try {
             Integer.valueOf(str);
@@ -102,16 +110,23 @@ public class MainWindow implements Initializable {
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Parts.
      * */
-    ObservableList<Part> filterParts(){
+    private ObservableList<Part> filterParts(){
 
         String search = searchPartText.getText();
-        ObservableList<Part> temp =  Inventory.lookupPart(search);
+        ObservableList<Part> temp = Inventory.lookupPart(search);
 
         if(isInt(search)){
-            temp.add(Inventory.lookupPart(Integer.parseInt(search)));
+            Part a = Inventory.lookupPart(Integer.parseInt(search));
+            if(a != null){
+                temp.add(a);
+            }
         }
 
-        if(temp.isEmpty()){
+        if(search.isEmpty()){
+            return Inventory.getAllParts();
+        }
+        else if (temp.isEmpty()) {
+            notFound();
             return Inventory.getAllParts();
         } else {
             return temp;
@@ -128,16 +143,23 @@ public class MainWindow implements Initializable {
      * @return temp ObservableList of Products containing all products whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Products.
      * */
-    ObservableList<Product> filterProducts(){
+    private ObservableList<Product> filterProducts(){
 
         String search = searchProductText.getText();
         ObservableList<Product> temp =  Inventory.lookupProduct(search);
 
         if(isInt(search)){
-            temp.add(Inventory.lookupProduct(Integer.parseInt(search)));
+            Product a = Inventory.lookupProduct(Integer.parseInt(search));
+            if(a != null){
+                temp.add(a);
+            }
         }
 
-        if(temp.isEmpty()){
+        if(search.isEmpty()){
+            return Inventory.getAllProducts();
+        }
+        else if (temp.isEmpty()) {
+            notFound();
             return Inventory.getAllProducts();
         } else {
             return temp;
@@ -248,7 +270,7 @@ public class MainWindow implements Initializable {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProduct.fxml")));
         stage.setScene(new Scene(scene));
-        stage.setTitle("ModifyProduct");
+        stage.setTitle("Modify Product");
         stage.show();
     }
 
