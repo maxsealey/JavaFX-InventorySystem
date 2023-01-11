@@ -19,6 +19,7 @@ import sealey.javafxinventorysystem.models.Product;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /*
@@ -79,11 +80,39 @@ public class MainWindow implements Initializable {
     * notFound() shows a 404 alert dialog box. Called in the filter methods
     * */
     private void notFound() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("404");
         alert.setContentText("Your search did not match any results. Please try again.");
         alert.setHeaderText("Not Found");
         alert.showAndWait();
+    }
+
+    /*
+     * couldNotDelete() displays an alert when an item is unable to be deleted. Called in the delete methods
+     * */
+    private void couldNotDelete(){
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Unable to delete");
+        alert.setContentText("We were not able to delete any items.");
+        alert.setHeaderText("Something went wrong.");
+        alert.showAndWait();
+    }
+
+    private boolean confirmation(){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Confirm Deletion");
+        alert.setContentText("Click 'Ok' to proceed.");
+        alert.setHeaderText("Are you sure you want to delete this item?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -203,12 +232,19 @@ public class MainWindow implements Initializable {
     * If an item is not selected or deleted, a dialog box displays an error message.
     *
     * @param event ActionEvent object for the Delete button
-    * @throws IOException Throws error message if there is an issue with the event
     * */
     @FXML
     void onActionDeletePart(ActionEvent event) {
 
-        Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
+        boolean success = false;
+
+        if(!partTable.getSelectionModel().isEmpty() && confirmation()){
+            success = Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
+        }
+
+        if(!success) {
+            couldNotDelete();
+        }
     }
 
     /*
@@ -221,7 +257,14 @@ public class MainWindow implements Initializable {
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
 
-        Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+        boolean success = false;
+
+        if(!productTable.getSelectionModel().isEmpty()) {
+            success = Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+        }
+        if(!success) {
+            couldNotDelete();
+        }
     }
 
     /*
@@ -280,7 +323,7 @@ public class MainWindow implements Initializable {
     * @param parts ObservableList of parts to be displayed in Parts table
     * @param products ObservableList of products to be displayed in Products table
     * */
-    void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
+    private void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
 
         partTable.setItems(parts);
         productTable.setItems(products);
