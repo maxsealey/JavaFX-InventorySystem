@@ -1,9 +1,7 @@
 package sealey.javafxinventorysystem.models;
-/*
-* Supplied class Part.java 
-*/
 
 /**
+ *
  * @author Max Sealey
  */
 public abstract class Part {
@@ -23,7 +21,7 @@ public abstract class Part {
     }
 
     /**
-     * @return id the id to get
+     * @return the id
      */
     public int getId() {
         return id;
@@ -37,7 +35,7 @@ public abstract class Part {
     }
 
     /**
-     * @return name the name to get
+     * @return the name
      */
     public String getName() {
         return name;
@@ -51,7 +49,7 @@ public abstract class Part {
     }
 
     /**
-     * @return price the price to get
+     * @return the price
      */
     public double getPrice() {
         return price;
@@ -65,7 +63,7 @@ public abstract class Part {
     }
     
     /**
-     * @return stock the stock to get
+     * @return the stock
      */
     public int getStock() {
         return stock;
@@ -79,7 +77,7 @@ public abstract class Part {
     }
 
     /**
-     * @return min the min to get
+     * @return the min
      */
     public int getMin() {
         return min;
@@ -93,7 +91,7 @@ public abstract class Part {
     }
 
     /**
-     * @return max the max to get
+     * @return the max
      */
     public int getMax() {
         return max;

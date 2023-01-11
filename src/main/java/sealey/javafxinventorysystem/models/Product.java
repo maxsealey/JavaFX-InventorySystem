@@ -134,7 +134,7 @@ public class Product {
     /*
     * @return associatedParts The entire list of parts associated with the product
     * */
-    public static ObservableList<Part> getAllAssociatedParts() {
+    public ObservableList<Part> getAllAssociatedParts() {
 
         return associatedParts;
     }
@@ -144,7 +144,7 @@ public class Product {
     *
     * @param part Part object to be added to list
     * */
-    public static void addAssociatedPart(Part part) {
+    public void addAssociatedPart(Part part) {
 
         associatedParts.add(part);
     }
@@ -156,8 +156,8 @@ public class Product {
     * @param selectedAssociatedPart Part object to be deleted
     * @return boolean True if successful, False if unsuccessful
     * */
-    public static boolean deleteAssociatedPart(Part selectedAssociatedPart) {
+    public boolean deleteAssociatedPart(Part selectedAssociatedPart) {
 
-        return (Boolean)associatedParts.remove(selectedAssociatedPart);
+        return associatedParts.remove(selectedAssociatedPart);
     }
 }
