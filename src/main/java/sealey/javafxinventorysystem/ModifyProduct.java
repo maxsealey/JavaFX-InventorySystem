@@ -13,9 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import sealey.javafxinventorysystem.models.Inventory;
-import sealey.javafxinventorysystem.models.Part;
-import sealey.javafxinventorysystem.models.Product;
+import sealey.javafxinventorysystem.models.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -189,14 +187,9 @@ public class ModifyProduct implements Initializable {
         alert.showAndWait();
     }
 
-    boolean checkStockValues(int min, int max, int stock) {
+    boolean checkStockValues(int min, int max, int stock){
 
-        if (max <= stock || min >= stock) {
-            errorMessage("Invalid Input", "Min should be less than Max, and the Inventory level must be in between", Alert.AlertType.ERROR);
-            return false;
-        } else {
-            return true;
-        }
+        return max > stock && min < stock;
     }
 
     /*
@@ -244,22 +237,40 @@ public class ModifyProduct implements Initializable {
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
 
-        int id = Integer.parseInt(productIDText.getPromptText());
-        String name = productNameText.getText();
-        double price = Double.parseDouble(priceText.getText());
-        int inv = Integer.parseInt(inventoryText.getText());
-        int min = Integer.parseInt(minText.getText());
-        int max = Integer.parseInt(maxText.getText());
+        try {
+            int id = Integer.parseInt(productIDText.getPromptText());
+            String name = productNameText.getText();
+            double price = Double.parseDouble(priceText.getText());
+            int inv = Integer.parseInt(inventoryText.getText());
+            int min = Integer.parseInt(minText.getText());
+            int max = Integer.parseInt(maxText.getText());
 
-        Product temp = new Product(id,name,price,inv,min,max);
-        temp.getAllAssociatedParts().addAll(bottomTable);
+            try {
+                if(!checkStockValues(min,max,inv)){
+                    throw new NumberFormatException();
+                } else {
+                    /*
+                    *
+                    * SAVE PRODUCT
+                    *
+                    * */
 
-        Inventory.updateProduct(temp);
+                    stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                    scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+                    stage.setScene(new Scene(scene));
+                    stage.setTitle("Inventory Management System");
+                    stage.show();
+                }
+            } catch(NumberFormatException e) {
+                errorMessage("Invalid Input","Inventory Level must be between Min and Max", Alert.AlertType.ERROR);
+                errorMessage("Invalid Input","Please enter only valid values the boxes. " +
+                        "Inventory Level, Min, Max, and (if applicable) Machine ID must be whole numbers.", Alert.AlertType.ERROR);
+            }
 
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
-        stage.setScene(new Scene(scene));
-        stage.show();
+        } catch(NumberFormatException e) {
+            errorMessage("Invalid Input","Please enter only valid values in each box. " +
+                    "Inventory Level, Min, Max, and (if applicable) Machine ID must be whole numbers.", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
