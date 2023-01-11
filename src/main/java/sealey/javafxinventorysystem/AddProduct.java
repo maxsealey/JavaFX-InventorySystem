@@ -302,7 +302,7 @@ public class AddProduct implements Initializable {
         table1IDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         table1NameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         table1InvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        table1InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        table1PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
     void populateTable2(ObservableList<Part> parts){
@@ -312,7 +312,7 @@ public class AddProduct implements Initializable {
         table2IDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         table2NameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         table2InvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        table2InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        table2PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
     @Override
