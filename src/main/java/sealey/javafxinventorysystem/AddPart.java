@@ -117,12 +117,7 @@ public class AddPart implements Initializable {
 
     boolean checkStockValues(int min, int max, int stock){
 
-        if(max <= stock || min >= stock){
-            errorMessage("Invalid Input", "Min should be less than Max, and the Inventory level must be in between", Alert.AlertType.ERROR);
-            return false;
-        } else {
-            return true;
-        }
+        return max > stock && min < stock;
     }
 
     /*
@@ -149,30 +144,44 @@ public class AddPart implements Initializable {
      * */
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
+        try {
+            int id = Integer.parseInt(partIDText.getPromptText());
+            String name = partNameText.getText();
+            double price = Double.parseDouble(priceText.getText());
+            int inv = Integer.parseInt(inventoryText.getText());
+            int min = Integer.parseInt(minText.getText());
+            int max = Integer.parseInt(maxText.getText());
 
-        int id = Integer.parseInt(partIDText.getPromptText());
-        String name = partNameText.getText();
-        double price = Double.parseDouble(priceText.getText());
-        int inv = Integer.parseInt(inventoryText.getText());
-        int min = Integer.parseInt(minText.getText());
-        int max = Integer.parseInt(maxText.getText());
-        boolean isInHouse = !outsourcedRadio.isSelected();
+            try {
+                if(!checkStockValues(min,max,inv)){
+                    throw new NumberFormatException();
+                } else {
+                    if(inhouseRadio.isSelected()){
+                        InHouse newPart = new InHouse(id,name,price,inv,max,min);
+                        newPart.setMachineId(Integer.parseInt(machineIDText.getText()));
+                        Inventory.addPart(newPart);
+                    } else {
+                        OutSourced newPart = new OutSourced(id,name,price,inv,max,min);
+                        newPart.setCompanyName(machineIDText.getText());
+                        Inventory.addPart(newPart);
+                    }
 
-        if(isInHouse){
-            InHouse newPart = new InHouse(id,name,price,inv,max,min);
-            newPart.setMachineId(Integer.parseInt(machineIDText.getText()));
-            Inventory.addPart(newPart);
-        } else {
-            OutSourced newPart = new OutSourced(id,name,price,inv,max,min);
-            newPart.setCompanyName(machineIDText.getText());
-            Inventory.addPart(newPart);
+                    stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                    scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+                    stage.setScene(new Scene(scene));
+                    stage.setTitle("Inventory Management System");
+                    stage.show();
+                }
+            } catch(NumberFormatException e) {
+                errorMessage("Invalid Input","Inventory Level must be between Min and Max", Alert.AlertType.ERROR);
+                errorMessage("Invalid Input","Please enter only valid values the boxes. " +
+                        "Inventory Level, Min, Max, and (if applicable) Machine ID must be whole numbers.", Alert.AlertType.ERROR);
+            }
+
+        } catch(NumberFormatException e) {
+            errorMessage("Invalid Input","Please enter only valid values in each box. " +
+                    "Inventory Level, Min, Max, and (if applicable) Machine ID must be whole numbers.", Alert.AlertType.ERROR);
         }
-
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
-        stage.setScene(new Scene(scene));
-        stage.setTitle("Inventory Management System");
-        stage.show();
     }
 
     /*
