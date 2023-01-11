@@ -106,14 +106,19 @@ public class ModifyProduct implements Initializable {
         double price = Double.parseDouble(priceText.getText());
         int max = Integer.parseInt(maxText.getText());
         int min = Integer.parseInt(minText.getText());
-//        Part temp = new Part() {
-//        }
 
 
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
         stage.setScene(new Scene(scene));
         stage.show();
+    }
+
+    @FXML
+    public void onActionAdd(ActionEvent actionEvent) {
+    }
+    @FXML
+    public void onActionRemove(ActionEvent actionEvent) {
     }
 
     @Override

@@ -9,10 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sealey.javafxinventorysystem.models.Inventory;
@@ -22,6 +19,7 @@ import sealey.javafxinventorysystem.models.Product;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AddProduct implements Initializable {
@@ -92,6 +90,46 @@ public class AddProduct implements Initializable {
     @FXML
     private TableColumn<Part, Double> table2PriceCol;
 
+    private ObservableList<Part> bottomTable = FXCollections.observableArrayList();
+
+    //private int currentID = -1;
+    /*
+     * notFound() shows a 404 alert dialog box. Called in the filter methods
+     * */
+
+    private void notFound() {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("404");
+        alert.setContentText("Your search did not match any results. Please try again.");
+        alert.setHeaderText("Not Found");
+        alert.showAndWait();
+    }
+
+    private boolean confirmation(){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Confirm Part Removal");
+        alert.setContentText("Click 'Ok' to proceed.");
+        alert.setHeaderText("Are you sure you want to remove this part from the product?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void couldNotRemove(){
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Unable to remove");
+        alert.setContentText("We were not able to remove this part.");
+        alert.setHeaderText("Something went wrong.");
+        alert.showAndWait();
+    }
+
     /*
      * The search() method is a helper function that returns a boolean indicating whether an integer is already being used as an ID number for an existing product.
      * This is only called in the generateID() method to ensure that the auto-generated ID is unique.
@@ -99,8 +137,9 @@ public class AddProduct implements Initializable {
      * @param id Integer to be checked for ID uniqueness
      * @return boolean True if ID belongs to existing product, False otherwise
      * */
-    boolean search(int id){
-        for(Part p : Inventory.getAllParts())
+    private boolean search(int id){
+
+        for(Product p : Inventory.getAllProducts())
         {
             if(p.getId() == id){
                 return true;
@@ -114,7 +153,8 @@ public class AddProduct implements Initializable {
      *
      * @return id Integer that is either 1 (if List is empty), or the next unique integer
      * */
-    int generateID() {
+    private int generateID() {
+
         int id = 1;
         for(Part a : Inventory.getAllParts()) {
             if(search(id)){
@@ -132,7 +172,7 @@ public class AddProduct implements Initializable {
      * @param str The string to be checked
      * @return boolean Returns true if string is also an integer, false if exception is caught
      */
-    boolean isInt(String str) {
+    private boolean isInt(String str) {
 
         try {
             Integer.valueOf(str);
@@ -150,20 +190,33 @@ public class AddProduct implements Initializable {
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Parts.
      * */
-    ObservableList<Part> filterParts(){
+    private ObservableList<Part> filterParts(){
 
         String search = searchPartText.getText();
-        ObservableList<Part> temp =  Inventory.lookupPart(search);
+        ObservableList<Part> temp = Inventory.lookupPart(search);
 
         if(isInt(search)){
-            temp.add(Inventory.lookupPart(Integer.parseInt(search)));
+            Part a = Inventory.lookupPart(Integer.parseInt(search));
+            if(a != null){
+                temp.add(a);
+            }
         }
 
-        if(temp.isEmpty()){
+        if(search.isEmpty()){
+            return Inventory.getAllParts();
+        }
+        else if (temp.isEmpty()) {
+            notFound();
             return Inventory.getAllParts();
         } else {
             return temp;
         }
+    }
+
+    @FXML
+    void onActionAdd(ActionEvent event) throws IOException {
+        bottomTable.add(table1.getSelectionModel().getSelectedItem());
+        populateTable2(getBottomTable());
     }
 
     @FXML
@@ -177,31 +230,37 @@ public class AddProduct implements Initializable {
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
 
-        int id = Integer.parseInt(productIDText.getText());
-        String name = productNameText.getText();
-        int inv = Integer.parseInt(inventoryText.getText());
-        double price = Double.parseDouble(priceText.getText());
-        int max = Integer.parseInt(maxText.getText());
-        int min = Integer.parseInt(minText.getText());
-
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
         stage.setScene(new Scene(scene));
         stage.show();
     }
 
-    private ObservableList<Part> partFilter(String search){
+    public void onActionRemoveItem(ActionEvent actionEvent) {
 
-        ObservableList<Part> temp;
-        if(search.isEmpty()) return Inventory.getAllParts();
-        temp = Inventory.lookupPart(search);
-        if(isInt(search)){
-            temp.add(Inventory.lookupPart(Integer.parseInt(search)));
+        boolean success = false;
+
+        if(!table2.getSelectionModel().isEmpty() && confirmation()){
+            bottomTable.remove(table2.getSelectionModel().getSelectedItem());
+            success = true;
         }
-        return temp;
+
+        if(!success) {
+            couldNotRemove();
+        }
     }
 
-    void populateTable1(ObservableList<Part> parts){
+    private ObservableList<Part> getBottomTable() {
+
+        return bottomTable;
+    }
+
+    private void setBottomTable(ObservableList<Part> bottomTable) {
+
+        this.bottomTable = bottomTable;
+    }
+
+    private void populateTable1(ObservableList<Part> parts){
 
         table1.setItems(parts);
 
@@ -209,7 +268,16 @@ public class AddProduct implements Initializable {
         table1NameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         table1InvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         table1InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+    }
 
+    private void populateTable2(ObservableList<Part> parts){
+
+        table2.setItems(parts);
+
+        table2IDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        table2NameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        table2InvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        table1InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
     @Override

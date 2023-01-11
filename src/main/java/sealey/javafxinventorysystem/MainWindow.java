@@ -9,10 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sealey.javafxinventorysystem.models.Inventory;
@@ -22,6 +19,7 @@ import sealey.javafxinventorysystem.models.Product;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /*
@@ -79,12 +77,51 @@ public class MainWindow implements Initializable {
     private TextField searchProductText;
 
     /*
+    * notFound() shows a 404 alert dialog box. Called in the filter methods
+    * */
+    private void notFound() {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("404");
+        alert.setContentText("Your search did not match any results. Please try again.");
+        alert.setHeaderText("Not Found");
+        alert.showAndWait();
+    }
+
+    /*
+     * couldNotDelete() displays an alert when an item is unable to be deleted. Called in the delete methods
+     * */
+    private void couldNotDelete(){
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Unable to delete");
+        alert.setContentText("We were not able to delete any items.");
+        alert.setHeaderText("Something went wrong.");
+        alert.showAndWait();
+    }
+
+    private boolean confirmation(){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Confirm Deletion");
+        alert.setContentText("Click 'Ok' to proceed.");
+        alert.setHeaderText("Are you sure you want to delete this item?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
     * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
     *
     * @param str The string to be checked
     * @return boolean Returns true if string is also an integer, false if exception is caught
     */
-    boolean isInt(String str) {
+    private boolean isInt(String str) {
 
         try {
             Integer.valueOf(str);
@@ -102,16 +139,23 @@ public class MainWindow implements Initializable {
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Parts.
      * */
-    ObservableList<Part> filterParts(){
+    private ObservableList<Part> filterParts(){
 
         String search = searchPartText.getText();
-        ObservableList<Part> temp =  Inventory.lookupPart(search);
+        ObservableList<Part> temp = Inventory.lookupPart(search);
 
         if(isInt(search)){
-            temp.add(Inventory.lookupPart(Integer.parseInt(search)));
+            Part a = Inventory.lookupPart(Integer.parseInt(search));
+            if(a != null){
+                temp.add(a);
+            }
         }
 
-        if(temp.isEmpty()){
+        if(search.isEmpty()){
+            return Inventory.getAllParts();
+        }
+        else if (temp.isEmpty()) {
+            notFound();
             return Inventory.getAllParts();
         } else {
             return temp;
@@ -128,16 +172,23 @@ public class MainWindow implements Initializable {
      * @return temp ObservableList of Products containing all products whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Products.
      * */
-    ObservableList<Product> filterProducts(){
+    private ObservableList<Product> filterProducts(){
 
         String search = searchProductText.getText();
         ObservableList<Product> temp =  Inventory.lookupProduct(search);
 
         if(isInt(search)){
-            temp.add(Inventory.lookupProduct(Integer.parseInt(search)));
+            Product a = Inventory.lookupProduct(Integer.parseInt(search));
+            if(a != null){
+                temp.add(a);
+            }
         }
 
-        if(temp.isEmpty()){
+        if(search.isEmpty()){
+            return Inventory.getAllProducts();
+        }
+        else if (temp.isEmpty()) {
+            notFound();
             return Inventory.getAllProducts();
         } else {
             return temp;
@@ -181,12 +232,19 @@ public class MainWindow implements Initializable {
     * If an item is not selected or deleted, a dialog box displays an error message.
     *
     * @param event ActionEvent object for the Delete button
-    * @throws IOException Throws error message if there is an issue with the event
     * */
     @FXML
     void onActionDeletePart(ActionEvent event) {
 
-        Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
+        boolean success = false;
+
+        if(!partTable.getSelectionModel().isEmpty() && confirmation()){
+            success = Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
+        }
+
+        if(!success) {
+            couldNotDelete();
+        }
     }
 
     /*
@@ -199,7 +257,14 @@ public class MainWindow implements Initializable {
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
 
-        Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+        boolean success = false;
+
+        if(!productTable.getSelectionModel().isEmpty()) {
+            success = Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+        }
+        if(!success) {
+            couldNotDelete();
+        }
     }
 
     /*
@@ -248,7 +313,7 @@ public class MainWindow implements Initializable {
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProduct.fxml")));
         stage.setScene(new Scene(scene));
-        stage.setTitle("ModifyProduct");
+        stage.setTitle("Modify Product");
         stage.show();
     }
 
@@ -258,7 +323,7 @@ public class MainWindow implements Initializable {
     * @param parts ObservableList of parts to be displayed in Parts table
     * @param products ObservableList of products to be displayed in Products table
     * */
-    void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
+    private void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
 
         partTable.setItems(parts);
         productTable.setItems(products);
