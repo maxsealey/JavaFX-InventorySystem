@@ -251,7 +251,7 @@ public class ModifyProduct implements Initializable {
                 } else {
                     Product temp = new Product(id,name,price,inv,min,max);
                     temp.getAllAssociatedParts().setAll(bottomTable);
-                    Inventory.updateProduct(id-1,temp);
+                    Inventory.updateProduct(id - 1,temp);
 
                     stage = (Stage)((Button)event.getSource()).getScene().getWindow();
                     scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));

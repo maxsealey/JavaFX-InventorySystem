@@ -287,7 +287,15 @@ public class MainWindow implements Initializable {
     @FXML
     void onActionExit(ActionEvent event) {
 
-        System.exit(0);
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText("Are you sure you want to exit?");
+        alert.setContentText("Your data will not be saved.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            System.exit(0);
+        }
     }
 
     /*
