@@ -1,16 +1,13 @@
 package sealey.javafxinventorysystem;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import sealey.javafxinventorysystem.models.InHouse;
 import sealey.javafxinventorysystem.models.Inventory;
@@ -70,11 +67,32 @@ public class ModifyPart implements Initializable {
     void onActionCompanyLabel(ActionEvent event) {
 
         machineIDLabel.setText("Company Name");
+        machineIDText.clear();
     }
     @FXML
     public void onActionMachineLabel(ActionEvent actionEvent) {
 
         machineIDLabel.setText("Machine ID");
+        machineIDText.clear();
+    }
+
+    void errorMessage(String title, String content, Alert.AlertType type) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setAlertType(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    boolean checkStockValues(int min, int max, int stock){
+
+        if(max <= stock || min >= stock){
+            errorMessage("Invalid Input", "Min should be less than Max, and the Inventory level must be in between", Alert.AlertType.ERROR);
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public void sendPart(Part part){
@@ -109,30 +127,31 @@ public class ModifyPart implements Initializable {
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
 
-        int id = Integer.parseInt(partIDText.getText());
-        String name = partNameText.getText();
-        int inv = Integer.parseInt(inventoryText.getText());
-        double price = Double.parseDouble(priceText.getText());
-        int max = Integer.parseInt(maxText.getText());
-        int min = Integer.parseInt(minText.getText());
-        Part temp;
+//        int id = Integer.parseInt(partIDText.getText());
+//        String name = partNameText.getText();
+//        double price = Double.parseDouble(priceText.getText());
+//        int inv = Integer.parseInt(inventoryText.getText());
+//        int min = Integer.parseInt(minText.getText());
+//        int max = Integer.parseInt(maxText.getText());
+//        boolean isInHouse = inhouseRadio.isSelected();
+//
+//        if(isInHouse){
+//            InHouse temp = new InHouse(id,name,price,inv,min,max);
+//            temp.setMachineId(Integer.parseInt(machineIDText.getText()));
+//            Inventory.updatePart(id,temp);
+//        } else {
+//            OutSourced temp = new OutSourced(id,name,price,inv,min,max);
+//            temp.setCompanyName(machineIDText.getText());
+//            Inventory.updatePart(id,temp);
+//        }
+//
+//        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+//        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+//        stage.setScene(new Scene(scene));
+//        stage.setTitle("Inventory Management System");
+//        stage.show();
 
-        if(inhouseRadio.isSelected()){
 
-            temp = new InHouse(id,name,price,inv,min,max);
-            ((InHouse) temp).setMachineId(Integer.parseInt(machineIDText.getText()));
-        } else {
-            temp = new OutSourced(id,name,price,inv,min,max);
-            ((OutSourced) temp).setCompanyName(machineIDText.getText());
-        }
-
-        Inventory.updatePart(temp);
-
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
-        stage.setScene(new Scene(scene));
-        stage.setTitle("Inventory Management System");
-        stage.show();
     }
 
     @Override

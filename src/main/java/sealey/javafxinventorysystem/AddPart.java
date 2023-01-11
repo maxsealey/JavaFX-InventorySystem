@@ -6,11 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import sealey.javafxinventorysystem.models.InHouse;
 import sealey.javafxinventorysystem.models.Inventory;
@@ -110,6 +106,25 @@ public class AddPart implements Initializable {
         return id;
     }
 
+    void errorMessage(String title, String content, Alert.AlertType type) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setAlertType(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    boolean checkStockValues(int min, int max, int stock){
+
+        if(max <= stock || min >= stock){
+            errorMessage("Invalid Input", "Min should be less than Max, and the Inventory level must be in between", Alert.AlertType.ERROR);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /*
     * The onActionCancel() event handler navigates back to the MainWindow without adding any data to Inventory When the Cancel button is clicked.
     *
@@ -137,10 +152,10 @@ public class AddPart implements Initializable {
 
         int id = Integer.parseInt(partIDText.getPromptText());
         String name = partNameText.getText();
-        int inv = Integer.parseInt(inventoryText.getText());
         double price = Double.parseDouble(priceText.getText());
-        int max = Integer.parseInt(maxText.getText());
+        int inv = Integer.parseInt(inventoryText.getText());
         int min = Integer.parseInt(minText.getText());
+        int max = Integer.parseInt(maxText.getText());
         boolean isInHouse = !outsourcedRadio.isSelected();
 
         if(isInHouse){

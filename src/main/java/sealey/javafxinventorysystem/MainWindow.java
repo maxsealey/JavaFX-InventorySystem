@@ -18,6 +18,7 @@ import sealey.javafxinventorysystem.models.Product;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -91,11 +92,11 @@ public class MainWindow implements Initializable {
     /*
      * couldNotDelete() displays an alert when an item is unable to be deleted. Called in the delete methods
      * */
-    private void couldNotDelete(){
+    private void couldNotDelete(String message){
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Unable to delete");
-        alert.setContentText("We were not able to delete any items.");
+        alert.setContentText(message);
         alert.setHeaderText("Something went wrong.");
         alert.showAndWait();
     }
@@ -238,12 +239,16 @@ public class MainWindow implements Initializable {
 
         boolean success = false;
 
-        if(!partTable.getSelectionModel().isEmpty() && confirmation()){
-            success = Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
-        }
+        try {
+            if (!partTable.getSelectionModel().isEmpty() && confirmation()) {
+                success = Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
+            }
 
-        if(!success) {
-            couldNotDelete();
+            if (!success) {
+                couldNotDelete("We were unable to delete an item. Please try again.");
+            }
+        } catch (NoSuchElementException e) {
+            couldNotDelete("We did not delete the item.");
         }
     }
 
@@ -258,12 +263,19 @@ public class MainWindow implements Initializable {
     void onActionDeleteProduct(ActionEvent event) {
 
         boolean success = false;
-
-        if(!productTable.getSelectionModel().isEmpty()) {
-            success = Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
-        }
-        if(!success) {
-            couldNotDelete();
+        try {
+            if(productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()) {
+                if(!productTable.getSelectionModel().isEmpty() && confirmation()) {
+                    success = Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+                }
+            } else {
+                couldNotDelete("You must remove the parts associated with this product in order to delete it.");
+            }
+            if(!success) {
+                couldNotDelete("We were unable to delete a product.");
+            }
+        } catch (NoSuchElementException e) {
+            couldNotDelete("We did not delete the product.");
         }
     }
 
@@ -292,13 +304,21 @@ public class MainWindow implements Initializable {
         loader.load();
 
         ModifyPart modPartController = loader.getController();
-        modPartController.sendPart(partTable.getSelectionModel().getSelectedItem());
+        try {
+            modPartController.sendPart(partTable.getSelectionModel().getSelectedItem());
 
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = loader.getRoot();
-        stage.setScene(new Scene(scene));
-        stage.setTitle("Modify Part");
-        stage.show();
+            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+            scene = loader.getRoot();
+            stage.setScene(new Scene(scene));
+            stage.setTitle("Modify Part");
+            stage.show();
+        } catch(NullPointerException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Please select a part.");
+            alert.showAndWait();
+        }
+
+
     }
 
     /*
@@ -310,11 +330,24 @@ public class MainWindow implements Initializable {
     @FXML
     void onActionModifyProduct(ActionEvent event) throws IOException {
 
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProduct.fxml")));
-        stage.setScene(new Scene(scene));
-        stage.setTitle("Modify Product");
-        stage.show();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Objects.requireNonNull(getClass().getResource("ModifyProduct.fxml")));
+        loader.load();
+
+        ModifyProduct modProductController = loader.getController();
+        try {
+            modProductController.sendProduct(productTable.getSelectionModel().getSelectedItem());
+
+            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+            scene = loader.getRoot();
+            stage.setScene(new Scene(scene));
+            stage.setTitle("Modify Product");
+            stage.show();
+        } catch(NullPointerException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Please select a product.");
+            alert.showAndWait();
+        }
     }
 
     /*

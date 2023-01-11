@@ -90,14 +90,13 @@ public class AddProduct implements Initializable {
     @FXML
     private TableColumn<Part, Double> table2PriceCol;
 
-    private ObservableList<Part> bottomTable = FXCollections.observableArrayList();
+    ObservableList<Part> bottomTable = FXCollections.observableArrayList();
 
-    //private int currentID = -1;
     /*
      * notFound() shows a 404 alert dialog box. Called in the filter methods
      * */
 
-    private void notFound() {
+    void notFound() {
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("404");
@@ -106,7 +105,7 @@ public class AddProduct implements Initializable {
         alert.showAndWait();
     }
 
-    private boolean confirmation(){
+    boolean confirmation(){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Confirm Part Removal");
         alert.setContentText("Click 'Ok' to proceed.");
@@ -121,11 +120,10 @@ public class AddProduct implements Initializable {
         }
     }
 
-    private void couldNotRemove(){
+    void errorMessage(String content){
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Unable to remove");
-        alert.setContentText("We were not able to remove this part.");
+        alert.setContentText(content);
         alert.setHeaderText("Something went wrong.");
         alert.showAndWait();
     }
@@ -137,7 +135,7 @@ public class AddProduct implements Initializable {
      * @param id Integer to be checked for ID uniqueness
      * @return boolean True if ID belongs to existing product, False otherwise
      * */
-    private boolean search(int id){
+    boolean search(int id){
 
         for(Product p : Inventory.getAllProducts())
         {
@@ -153,7 +151,7 @@ public class AddProduct implements Initializable {
      *
      * @return id Integer that is either 1 (if List is empty), or the next unique integer
      * */
-    private int generateID() {
+    int generateID() {
 
         int id = 1;
         for(Part a : Inventory.getAllParts()) {
@@ -172,12 +170,31 @@ public class AddProduct implements Initializable {
      * @param str The string to be checked
      * @return boolean Returns true if string is also an integer, false if exception is caught
      */
-    private boolean isInt(String str) {
+    boolean isInt(String str) {
 
         try {
             Integer.valueOf(str);
             return true;
         } catch (NumberFormatException e) { return false; }
+    }
+
+    void errorMessage(String title, String content, Alert.AlertType type) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setAlertType(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    boolean checkStockValues(int min, int max, int stock) {
+
+        if (max <= stock || min >= stock) {
+            errorMessage("Invalid Input", "Min should be less than Max, and the Inventory level must be in between", Alert.AlertType.ERROR);
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /*
@@ -190,7 +207,7 @@ public class AddProduct implements Initializable {
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Parts.
      * */
-    private ObservableList<Part> filterParts(){
+    ObservableList<Part> filterParts(){
 
         String search = searchPartText.getText();
         ObservableList<Part> temp = Inventory.lookupPart(search);
@@ -215,8 +232,13 @@ public class AddProduct implements Initializable {
 
     @FXML
     void onActionAdd(ActionEvent event) throws IOException {
-        bottomTable.add(table1.getSelectionModel().getSelectedItem());
-        populateTable2(getBottomTable());
+
+        if(!table1.getSelectionModel().isEmpty()) {
+            bottomTable.add(table1.getSelectionModel().getSelectedItem());
+            populateTable2(bottomTable);
+        } else {
+            errorMessage("Please select a part.");
+        }
     }
 
     @FXML
@@ -229,6 +251,21 @@ public class AddProduct implements Initializable {
     }
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
+
+//        int id = Integer.parseInt(productIDText.getPromptText());
+//        String name = productNameText.getText();
+//        double price = Double.parseDouble(priceText.getText());
+//        int inv = Integer.parseInt(inventoryText.getText());
+//        int min = Integer.parseInt(minText.getText());
+//        int max = Integer.parseInt(maxText.getText());
+//
+//        Product temp = new Product(id,name,price,inv,min,max);
+//
+//        for(Part a : bottomTable) {
+//            temp.addAssociatedPart(a);
+//        }
+//
+//        Inventory.addProduct(temp);
 
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
@@ -246,21 +283,11 @@ public class AddProduct implements Initializable {
         }
 
         if(!success) {
-            couldNotRemove();
+            errorMessage("We did not remove a part.");
         }
     }
 
-    private ObservableList<Part> getBottomTable() {
-
-        return bottomTable;
-    }
-
-    private void setBottomTable(ObservableList<Part> bottomTable) {
-
-        this.bottomTable = bottomTable;
-    }
-
-    private void populateTable1(ObservableList<Part> parts){
+    void populateTable1(ObservableList<Part> parts){
 
         table1.setItems(parts);
 
@@ -270,14 +297,14 @@ public class AddProduct implements Initializable {
         table1InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
-    private void populateTable2(ObservableList<Part> parts){
+    void populateTable2(ObservableList<Part> parts){
 
         table2.setItems(parts);
 
         table2IDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         table2NameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         table2InvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        table1InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        table2InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
     @Override
