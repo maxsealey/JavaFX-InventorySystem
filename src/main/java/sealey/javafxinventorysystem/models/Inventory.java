@@ -148,46 +148,13 @@ public class Inventory {
         return temp;
     }
 
-    /*
-    *
-    *
-    *
-    *
-    *
-    *
-    * */
-    public static void updatePart(Part part) {
 
-        for(Part p : Inventory.getAllParts())
-        {
-            if(p.getId() == part.getId())
-            {
-                if(part instanceof InHouse){
-
-                } else {
-                    ((OutSourced) p).setCompanyName(((OutSourced) part).getCompanyName());
-                }
-                p.setId(part.getId());
-                p.setName(part.getName());
-                p.setPrice(part.getPrice());
-                p.setStock(part.getStock());
-                p.setMin(part.getMin());
-                p.setMax(part.getMax());
-                return;
-            }
-        }
+    public static void updatePart(int index, Part selectedPart) {
+        allParts.set(index, selectedPart);
     }
 
-    /*
-     *
-     *
-     *
-     *
-     *
-     *
-     * */
     public static void updateProduct(Product product) {
-
+        allProducts.set(product.getId(), product);
     }
 
     /*

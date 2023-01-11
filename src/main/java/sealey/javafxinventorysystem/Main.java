@@ -51,7 +51,7 @@ public class Main extends Application {
 
         part1.setCompanyName("Headgum");
         part2.setCompanyName("OMSB");
-        part2.setCompanyName("Zona Gale");
+        part3.setCompanyName("Zona Gale");
         part4.setMachineId(87);
         part5.setMachineId(32);
         part6.setMachineId(99);
