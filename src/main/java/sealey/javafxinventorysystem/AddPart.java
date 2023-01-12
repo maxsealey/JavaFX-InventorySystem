@@ -18,10 +18,10 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-/*
- * @author Max Sealey
+/**
+ *  The AddPart controller controls the components used to create and add a part to the inventory.
  *
- * The AddPart controller controls the components used to create and add a part to the inventory.
+ * @author Max Sealey
  * */
 
 public class AddPart implements Initializable {
@@ -67,7 +67,7 @@ public class AddPart implements Initializable {
     @FXML
     private Button saveButton;
 
-    /*
+    /**
      * Helper function that returns a boolean indicating whether an integer is already being used as an ID number
      * This is only called in the generateID() method to ensure that the auto-generated ID is unique.
      *
@@ -85,7 +85,7 @@ public class AddPart implements Initializable {
         return false;
     }
 
-    /*
+    /**
      * The generateID() method is a helper function that generates an ID number for created part. Always returns the next positive available ID
      *
      * @return id Unique part ID
@@ -103,7 +103,7 @@ public class AddPart implements Initializable {
         return id;
     }
 
-    /*
+    /**
      * Method displays alert and that sets title, content, and alert type
      *
      * @param title Alert title
@@ -119,7 +119,7 @@ public class AddPart implements Initializable {
         alert.showAndWait();
     }
 
-    /*
+    /**
      * User input validation for Inventory level, max, and min values
      *
      * @param min minimum inventory level
@@ -133,7 +133,7 @@ public class AddPart implements Initializable {
         return max > stock && min < stock && min >= 1;
     }
 
-    /*
+    /**
      * Event handler that sets scene back to MainWindow when the cancel button is clicked
      *
      * @param event Cancel button event
@@ -149,7 +149,7 @@ public class AddPart implements Initializable {
         stage.show();
     }
 
-    /*
+    /**
      * Event handler that checks user input for validity and then adds the part to inventory
      *
      * @param event Save button event
@@ -197,7 +197,7 @@ public class AddPart implements Initializable {
         }
     }
 
-    /*
+    /**
      * Event handler that changes the text of the MachineID/Company Name Label on selection of Outsourced radio button
      *
      * @param event Outsourced radio button selection event
@@ -208,10 +208,10 @@ public class AddPart implements Initializable {
         machineIDLabel.setText("Company Name");
     }
 
-    /*
+    /**
      * Event handler that changes the text of the MachineID/Company Name Label on selection of In-House radio button
      *
-     * @param event In-House radio button selection event
+     * @param actionEvent In-House radio button selection event
      * */
     @FXML
     public void onActionMachineLabel(ActionEvent actionEvent) {
@@ -219,7 +219,7 @@ public class AddPart implements Initializable {
         machineIDLabel.setText("Machine ID");
     }
 
-    /*
+    /**
      * Called when initializing AddPart scene, generates unique part ID
      *
      * @param url location used to resolve relative paths for the root object, or null

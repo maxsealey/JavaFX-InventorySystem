@@ -22,11 +22,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-/*
-* @author Max Sealey
-*
-* The MainWindow controller controls the components of the initial scene and acts as the "home page" for the application.
-* */
+/**
+ * The MainWindow controller controls the components of the initial scene and acts as the "home page" for the application.
+ *
+ * @author Max Sealey
+ * */
 
 public class MainWindow implements Initializable {
 
@@ -74,7 +74,7 @@ public class MainWindow implements Initializable {
     @FXML
     private TextField searchProductText;
 
-    /*
+    /**
      * Method displays alert and that sets title, content, and alert type
      *
      * @param title Alert title
@@ -90,8 +90,10 @@ public class MainWindow implements Initializable {
         alert.showAndWait();
     }
 
-    /*
+    /**
      * couldNotDelete() displays an alert when an item is unable to be deleted. Called in the delete methods
+     *
+     * @param message delete message
      * */
     private void couldNotDelete(String message){
 
@@ -102,7 +104,7 @@ public class MainWindow implements Initializable {
         alert.showAndWait();
     }
 
-    /*
+    /**
      * Displays alert asking for confirmation that item should be deleted, returns true if Ok button clicked, false otherwise
      *
      * @return boolean true or false
@@ -122,7 +124,7 @@ public class MainWindow implements Initializable {
         }
     }
 
-    /*
+    /**
      * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
      *
      * @param str The string to be checked
@@ -136,7 +138,7 @@ public class MainWindow implements Initializable {
         } catch (NumberFormatException e) { return false; }
     }
 
-    /*
+    /**
      * The filterParts() method checks a string and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
      *
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
@@ -165,7 +167,7 @@ public class MainWindow implements Initializable {
         }
     }
 
-    /*
+    /**
      * The filterProducts() method checks a string and returns a list of Products whose name contains the string, and/or whose ID is equal to the string.
      *
      * @return ObservableList of Products containing all products whose name contains the search parameter
@@ -194,7 +196,7 @@ public class MainWindow implements Initializable {
         }
     }
 
-    /*
+    /**
     * The onActionAddPart() event handler sets the AddPart scene when the Add Button under the parts table is clicked.
     *
     * @param event Add button event
@@ -210,7 +212,7 @@ public class MainWindow implements Initializable {
         stage.show();
     }
 
-    /*
+    /**
      * The onActionAddProduct() event handler sets the AddProduct scene when the Add Button under the products table is clicked.
      *
      * @param event Add Product button event
@@ -226,7 +228,7 @@ public class MainWindow implements Initializable {
         stage.show();
     }
 
-    /*
+    /**
     * The onActionDeletePart() event handler deletes the selected part(s) when delete button is clicked.
     * If an item is not selected or deleted, a dialog box displays an error message.
     *
@@ -250,12 +252,11 @@ public class MainWindow implements Initializable {
         }
     }
 
-    /*
+    /**
      * The onActionDeleteProduct() event handler deletes the selected product(s) when delete button is clicked.
      * If an item is not selected or deleted, a dialog box displays an error message. Won't let you delete a product with any associated parts.
      *
      * @param event Delete button event
-     * @throws IOException IOException
      * */
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
@@ -280,7 +281,7 @@ public class MainWindow implements Initializable {
         }
     }
 
-    /*
+    /**
      * The onActionExit() event handler closes the application when exit button is clicked and user confirms with alert.
      *
      * @param event Exit button event
@@ -303,7 +304,7 @@ public class MainWindow implements Initializable {
         }
     }
 
-    /*
+    /**
      * The onActionModifyPart() event handler sets the ModifyPart scene when the Modify Button under the parts table is clicked.
      * If item is selected, sends part's data to ModifyPart controller.
      *
@@ -335,7 +336,7 @@ public class MainWindow implements Initializable {
 
     }
 
-    /*
+    /**
      * The onActionModifyProduct() event handler sets the ModifyProduct scene when the Modify Button under the products table is clicked.
      * If item is selected, sends selected product's data to Modify Product controller.
      *
@@ -365,7 +366,7 @@ public class MainWindow implements Initializable {
         }
     }
 
-    /*
+    /**
     * The displayData() method sets the values to be displayed in both tables.
     *
     * @param parts ObservableList of parts to be displayed in Parts table
@@ -387,7 +388,7 @@ public class MainWindow implements Initializable {
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
-    /*
+    /**
     * Called when MainWindow controller is initialized. It displays all products currently in the inventory,
     * and then sets event listeners on the search bar TextFields. When the search field is selected
     * and the 'enter' button is clicked, the event handler is fired and the table is updated.

@@ -22,10 +22,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-/*
- * @author Max Sealey
- *
+/**
  * The ModifyProduct controller controls the components used to edit the values and associated parts of the selected product.
+ * @author Max Sealey
  * */
 
 public class ModifyProduct implements Initializable {
@@ -99,7 +98,7 @@ public class ModifyProduct implements Initializable {
     Product updatedProduct = new Product();
 
 
-    /*
+    /**
     * Displays alert asking for confirmation that item should be deleted, returns true if Ok button clicked, false otherwise
     *
     * @return boolean true or false
@@ -119,7 +118,7 @@ public class ModifyProduct implements Initializable {
         }
     }
 
-    /*
+    /**
     * Simple error message alert that takes in message and displays warning
     *
     * @param content Message to be displayed in alert
@@ -132,7 +131,7 @@ public class ModifyProduct implements Initializable {
         alert.showAndWait();
     }
 
-    /*
+    /**
     * Overloaded errorMessage method that sets title, content, and alert type
     *
     * @param title Alert title
@@ -148,7 +147,7 @@ public class ModifyProduct implements Initializable {
         alert.showAndWait();
     }
 
-    /*
+    /**
      * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
      *
      * @param str The string to be checked
@@ -162,7 +161,7 @@ public class ModifyProduct implements Initializable {
         } catch (NumberFormatException e) { return false; }
     }
 
-    /*
+    /**
      * User input validation for Inventory level, max, and min values
      *
      * @param min minimum inventory level
@@ -176,7 +175,7 @@ public class ModifyProduct implements Initializable {
         return max > stock && min < stock && min >= 1;
     }
 
-    /*
+    /**
      * The filterParts() method checks a string and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
      *
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
@@ -205,10 +204,10 @@ public class ModifyProduct implements Initializable {
         }
     }
 
-    /*
+    /**
      * Event handler that sets scene back to MainWindow when the cancel button is clicked
      *
-             * @param event Cancel button event
+     * @param event Cancel button event
      * @throws IOException IOException
      * */
     @FXML
@@ -220,7 +219,7 @@ public class ModifyProduct implements Initializable {
         stage.show();
     }
 
-    /*
+    /**
      * Event handler that checks user input for validity and then updates the product in inventory
      *
      * @param event Save button event
@@ -281,7 +280,7 @@ public class ModifyProduct implements Initializable {
         }
     }
 
-    /*
+    /**
     * When an item in the top table is selected and the add button is clicked, this event handler will fire and add the item to the bottom table.
     *
     * @param event Add button event
@@ -298,7 +297,7 @@ public class ModifyProduct implements Initializable {
         }
     }
 
-    /*
+    /**
     * If an item on the bottom table is selected and the remove button is clicked, this event
     * handler will fire and on user confirmation, remove the item from the bottom table.
     *
@@ -313,9 +312,8 @@ public class ModifyProduct implements Initializable {
             if(!table2.getSelectionModel().isEmpty())
             {
                 if(confirmation()){
-                    updatedProduct.deleteAssociatedPart(table2.getSelectionModel().getSelectedItem());
+                    success = updatedProduct.deleteAssociatedPart(table2.getSelectionModel().getSelectedItem());
                     System.out.println("successful removal");
-                    success = true;
                 }
             }
             if(!success) {
@@ -330,7 +328,7 @@ public class ModifyProduct implements Initializable {
 
     }
 
-    /*
+    /**
      * Used to receive data of product to be modified from MainWindow. Sets TextFields and updatedProduct Product object attributes
      *
      * @param product Product to be modified
@@ -357,7 +355,7 @@ public class ModifyProduct implements Initializable {
         }
     }
 
-    /*
+    /**
     * Populates table1 with data from each of the parts that are passed in. Table1 should always contain a list of the
     * parts in inventory.
     *
@@ -373,7 +371,7 @@ public class ModifyProduct implements Initializable {
         table1PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
-    /*
+    /**
      * Populates table2 with data from each of the parts that are passed in. Table2 should initially contain the
      * parts in the unmodified product, and update when parts then are added and removed
      *
@@ -389,7 +387,7 @@ public class ModifyProduct implements Initializable {
         table2PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
-    /*
+    /**
      * Called when initializing Modify Product scene. Calls populateTable1 and sets up event handler to filter parts in top table based on input value
      *
      * @param url location used to resolve relative paths for the root object, or null

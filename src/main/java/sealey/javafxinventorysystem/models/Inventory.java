@@ -3,11 +3,11 @@ package sealey.javafxinventorysystem.models;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-/*
- * @author Max Sealey
- *
+/**
  * The Inventory class contains a list of all products and parts in the inventory, methods to
  * retrieve and set the lists; and methods to update, add, lookup, and delete individual parts and products.
+ *
+ * @author Max Sealey
  * */
 
 public class Inventory {
@@ -15,7 +15,7 @@ public class Inventory {
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
 
-    /*
+    /**
     * The getAllParts() method returns the list of all parts in the inventory. "Getter" for
     * the allParts list attribute.
     *
@@ -26,7 +26,7 @@ public class Inventory {
         return allParts;
     }
 
-    /*
+    /**
      * The setAllParts() method accepts a list of Part objects and assigns its values to the allParts list attribute.
      * "Setter" for the allParts list attribute.
      *
@@ -37,7 +37,7 @@ public class Inventory {
         Inventory.allParts = allParts;
     }
 
-    /*
+    /**
      * The getAllProducts() method returns a list of all products in the inventory. "Getter" for
      * the allProducts list attribute.
      *
@@ -48,7 +48,7 @@ public class Inventory {
         return allProducts;
     }
 
-    /*
+    /**
      * The setAllProducts() method accepts a list of Product objects and assigns its values to the allProducts list attribute.
      * "Setter" for the allProducts list attribute.
      *
@@ -59,7 +59,7 @@ public class Inventory {
         Inventory.allProducts = allProducts;
     }
 
-    /*
+    /**
     * The addPart() method takes in a Part object and adds it to the allParts list.
     *
     * @param newPart Part to be added to list
@@ -69,7 +69,7 @@ public class Inventory {
         allParts.add(newPart);
     }
 
-    /*
+    /**
     * The addProduct() method takes in a Product object and adds it to the allProducts list.
     *
     * @param newProduct Product to be added to list
@@ -79,7 +79,7 @@ public class Inventory {
         allProducts.add(newProduct);
     }
 
-    /*
+    /**
     * lookupPart() is an overloaded method that takes in an integer and searches the Parts list for an object with the matching id number.
     *
     * @param partId Integer to compare with each object's id number
@@ -93,7 +93,7 @@ public class Inventory {
         return null;
     }
 
-    /*
+    /**
      * lookupProduct() is an overloaded method that takes in an integer and searches the Products list for an object with the matching id number.
      *
      * @param productId Integer to compare with each object's id number
@@ -107,7 +107,7 @@ public class Inventory {
         return null;
     }
 
-    /*
+    /**
     * lookupPart() ia an overloaded method that searches through the list of Parts and returns a list of all objects
     * containing the search term. Not case-sensitive
     *
@@ -127,7 +127,7 @@ public class Inventory {
         return temp;
     }
 
-    /*
+    /**
      * lookupProduct() ia an overloaded method that searches through the list of Products and returns a list of all objects
      * containing the search term. Not case-sensitive
      *
@@ -147,7 +147,7 @@ public class Inventory {
         return temp;
     }
 
-    /*
+    /**
     * updatePart() takes in the updated part and its index, then replaces the original part
     *
     * @param index Int index of part to be modified
@@ -157,7 +157,7 @@ public class Inventory {
         allParts.set(index, selectedPart);
     }
 
-    /*
+    /**
      * updateProduct() takes in the updated product and its index, then replaces the original product
      *
      * @param index Integer index of part to be modified
@@ -167,7 +167,7 @@ public class Inventory {
         allProducts.set(index, newProduct);
     }
 
-    /*
+    /**
     * The deletePart() method attempts to remove a part from the list and returns true if successful
     *
     * @param selectedPart Part object to be deleted
@@ -178,7 +178,7 @@ public class Inventory {
         return Inventory.getAllParts().remove(selectedPart);
     }
 
-    /*
+    /**
      * The deleteProduct() method attempts to remove a product from the list and returns true if successful
      *
      * @param selectedProduct Part object to be deleted
