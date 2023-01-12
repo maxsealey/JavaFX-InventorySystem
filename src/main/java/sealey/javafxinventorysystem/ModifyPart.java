@@ -20,10 +20,9 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 
-/*
- * @author Max Sealey
- *
+/**
  * The ModifyPart controller controls the components used to edit the values and subclass (InHouse or Outsourced) of the selected part.
+ * @author Max Sealey
  * */
 
 public class ModifyPart implements Initializable {
@@ -70,7 +69,7 @@ public class ModifyPart implements Initializable {
     @FXML
     private Button saveButton;
 
-    /*
+    /**
     * Event handler that changes the text of the MachineID/Company Name Label on selection of Outsourced radio button
     *
     * @param event Outsourced radio button selection event
@@ -82,10 +81,10 @@ public class ModifyPart implements Initializable {
         machineIDText.clear();
     }
 
-    /*
+    /**
      * Event handler that changes the text of the MachineID/Company Name Label on selection of In-House radio button
      *
-     * @param event In-House radio button selection event
+     * @param actionEvent In-House radio button selection event
      * */
     @FXML
     public void onActionMachineLabel(ActionEvent actionEvent) {
@@ -94,7 +93,7 @@ public class ModifyPart implements Initializable {
         machineIDText.clear();
     }
 
-    /*
+    /**
     * Generic error message method - creates and shows alert based on parameters
     *
     * @param title Alert title
@@ -110,7 +109,7 @@ public class ModifyPart implements Initializable {
         alert.showAndWait();
     }
 
-    /*
+    /**
     * User input validation for Inventory level, max, and min values
     *
     * @param min minimum inventory level
@@ -124,7 +123,7 @@ public class ModifyPart implements Initializable {
         return max > stock && min < stock && min >= 1;
     }
 
-    /*
+    /**
     * Used to receive data of part to be modified from MainWindow. Sets TextFields and radio button status
     *
     * @param part Part to be modified
@@ -149,7 +148,7 @@ public class ModifyPart implements Initializable {
         }
     }
 
-    /*
+    /**
     * Event handler that sets scene back to MainWindow when the cancel button is clicked
     *
     * @param event Cancel button event
@@ -165,7 +164,7 @@ public class ModifyPart implements Initializable {
         stage.show();
     }
 
-    /*
+    /**
     * Event handler that checks user input for validity and then updates the part in inventory
     *
     * <p><b>
@@ -219,7 +218,7 @@ public class ModifyPart implements Initializable {
         }
     }
 
-    /*
+    /**
      * Called when initializing Modify Part scene
      *
      * @param url location used to resolve relative paths for the root object, or null

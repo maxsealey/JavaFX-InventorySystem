@@ -3,10 +3,9 @@ package sealey.javafxinventorysystem.models;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-/*
- * @author Max Sealey
- *
+/**
  * The Product class contains the attributes of each product, including a list of all associated parts.
+ * @author Max Sealey
  * */
 public class Product {
 
@@ -18,9 +17,15 @@ public class Product {
     private int min;
     private int max;
 
-    /*
-    * Product class constructor, called when a Product object is created. Assigns values.
-    * */
+    /**
+     * Product class constructor, called when a Product object is created. Assigns values.
+     * @param id id
+     * @param name name
+     * @param price price
+     * @param stock stock
+     * @param min min
+     * @param max max
+     */
     public Product(int id, String name, double price, int stock, int min, int max) {
 
         this.id = id;
@@ -30,6 +35,9 @@ public class Product {
         this.min = min;
         this.max = max;
     }
+    /**
+     * Default constructor
+     * */
 
     public Product(){
 
@@ -131,7 +139,7 @@ public class Product {
         this.max = max;
     }
 
-    /*
+    /**
     * @return associatedParts The entire list of parts associated with the product
     * */
     public ObservableList<Part> getAllAssociatedParts() {
@@ -139,15 +147,15 @@ public class Product {
         return associatedParts;
     }
 
-    /*
-     * @para, associatedParts The entire list of parts associated with the product
+    /**
+     * @param newPartsList Assigns the entire list of parts associated with the product
      * */
     public void setAllAssociatedParts(ObservableList<Part> newPartsList) {
 
         associatedParts = newPartsList;
     }
 
-    /*
+    /**
     * The addAssociatedPart() method takes in a part object and adds it to the list of associated parts.
     *
     * @param part Part object to be added to list
@@ -157,7 +165,7 @@ public class Product {
         associatedParts.add(part);
     }
 
-    /*
+    /**
     * The deleteAssociatedPart() method takes in the selected part object and attempts to remove it from
     * the list, returning true if successful.
     *

@@ -9,9 +9,7 @@ import javafx.stage.Stage;
 import sealey.javafxinventorysystem.models.*;
 
 import java.io.IOException;
-/*
-* @author Max Sealey
-*
+/**
 * The Main class sets the initial scene and launches the application.
 *
 * <p>The javadoc folder is located in the top level directory of the project (JavaFX-InventorySystem/javadoc).</p>
@@ -21,11 +19,12 @@ import java.io.IOException;
 * made to the data upon exiting the program. This could be done via interacting with a relational database or creating a
 * csv file to store the data.
 * </b></p>
+ * @author Max Sealey
 * */
 
 public class Main extends Application {
 
-    /*
+    /**
     * The start() method retrieves the FXML file for the main window and sets the scene. Calls the testData method, which can be removed or replaced.
     *
     * @param stage Stage to contain the scenes
@@ -43,7 +42,7 @@ public class Main extends Application {
         stage.show();
     }
 
-    /*
+    /**
     * I used this testData method to add items to the inventory upon starting the program. Can be removed or replaced.
     * */
 
@@ -73,7 +72,6 @@ public class Main extends Application {
         prod2.addAssociatedPart(part3);
         prod2.addAssociatedPart(part2);
         prod2.addAssociatedPart(part5);
-
         prod3.addAssociatedPart(part2);
         prod3.addAssociatedPart(part1);
         prod3.addAssociatedPart(part3);
@@ -86,7 +84,7 @@ public class Main extends Application {
         ObservableList<Product> products = FXCollections.observableArrayList(prod1,prod2,prod3);
         Inventory.setAllProducts(products);
     }
-    /*
+    /**
     * The main() method is used to run the program.
     *
     * @param args String arguments that may be passed in. Will not be utilized in this program.
