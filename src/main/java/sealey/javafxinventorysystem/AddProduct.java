@@ -1,6 +1,5 @@
 package sealey.javafxinventorysystem;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,9 +17,16 @@ import sealey.javafxinventorysystem.models.Product;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+/*
+ * @author Max Sealey
+ *
+ * The AddProduct controller controls the components used to create and add a new product to the inventory.
+ * */
 
 public class AddProduct implements Initializable {
 
@@ -90,21 +96,13 @@ public class AddProduct implements Initializable {
     @FXML
     private TableColumn<Part, Double> table2PriceCol;
 
-    ObservableList<Part> bottomTable = FXCollections.observableArrayList();
+    Product newProduct = new Product();
 
     /*
-     * notFound() shows a 404 alert dialog box. Called in the filter methods
+     * Displays alert asking for confirmation that item should be deleted, returns true if Ok button clicked, false otherwise
+     *
+     * @return boolean true or false
      * */
-
-    void notFound() {
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("404");
-        alert.setContentText("Your search did not match any results. Please try again.");
-        alert.setHeaderText("Not Found");
-        alert.showAndWait();
-    }
-
     boolean confirmation(){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Confirm Part Removal");
@@ -120,6 +118,11 @@ public class AddProduct implements Initializable {
         }
     }
 
+    /*
+     * Simple error message alert that takes in message and displays warning
+     *
+     * @param content Message to be displayed in alert
+     * */
     void errorMessage(String content){
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -129,14 +132,29 @@ public class AddProduct implements Initializable {
     }
 
     /*
-     * The search() method is a helper function that returns a boolean indicating whether an integer is already being used as an ID number for an existing product.
+     * Overloaded errorMessage method that sets title, content, and alert type
+     *
+     * @param title Alert title
+     * @param content Alert message
+     * @param type Alert type
+     * */
+    void errorMessage(String title, String content, Alert.AlertType type) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setAlertType(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    /*
+     * Helper function that returns a boolean indicating whether an integer is already being used as an ID number
      * This is only called in the generateID() method to ensure that the auto-generated ID is unique.
      *
      * @param id Integer to be checked for ID uniqueness
      * @return boolean True if ID belongs to existing product, False otherwise
      * */
     boolean search(int id){
-
         for(Product p : Inventory.getAllProducts())
         {
             if(p.getId() == id){
@@ -147,14 +165,14 @@ public class AddProduct implements Initializable {
     }
 
     /*
-     * The generateID() method is a helper function that generates an ID number for created part. Always returns the next unique integer in sequential order
+     * The generateID() method is a helper function that generates an ID number for created product. Always returns the next positive available ID
      *
-     * @return id Integer that is either 1 (if List is empty), or the next unique integer
+     * @return id Unique product ID
      * */
     int generateID() {
 
         int id = 1;
-        for(Part a : Inventory.getAllParts()) {
+        for(Product a : Inventory.getAllProducts()) {
             if(search(id)){
                 id++;
             } else {
@@ -178,27 +196,23 @@ public class AddProduct implements Initializable {
         } catch (NumberFormatException e) { return false; }
     }
 
-    void errorMessage(String title, String content, Alert.AlertType type) {
-
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setAlertType(type);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
+    /*
+     * User input validation for Inventory level, max, and min values
+     *
+     * @param min minimum inventory level
+     * @param max maximum inventory level
+     * @param stock current inventory level
+     *
+     * @return boolean True if min is positive and less than stock, and stock is less than max
+     * */
     boolean checkStockValues(int min, int max, int stock){
 
-        return max > stock && min < stock;
+        return max > stock && min < stock && min >= 1;
     }
 
     /*
-     * The filterParts() method checks a string input (searchPartText TextField)
-     * and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
-     * Returns an ObservableList containing all parts if the TextField is empty. If the search term does not
-     * find any matches, error message is displayed in dialog box.
+     * The filterParts() method checks a string and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
      *
-     * @param search String retrieved from searchPartText
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Parts.
      * */
@@ -218,24 +232,36 @@ public class AddProduct implements Initializable {
             return Inventory.getAllParts();
         }
         else if (temp.isEmpty()) {
-            notFound();
+            errorMessage("404","Your search did not return any results. Please try again.", Alert.AlertType.INFORMATION);
             return Inventory.getAllParts();
         } else {
             return temp;
         }
     }
 
+    /*
+     * When an item in the top table is selected and the add button is clicked, this event handler will fire and add the item to the bottom table.
+     *
+     * @param event Add button event
+     * @throws IOException IOException
+     * */
     @FXML
     void onActionAdd(ActionEvent event) throws IOException {
 
         if(!table1.getSelectionModel().isEmpty()) {
-            bottomTable.add(table1.getSelectionModel().getSelectedItem());
-            populateTable2(bottomTable);
+            newProduct.addAssociatedPart(table1.getSelectionModel().getSelectedItem());
+            populateTable2(newProduct.getAllAssociatedParts());
         } else {
             errorMessage("Please select a part.");
         }
     }
 
+    /*
+     * Event handler that sets scene back to MainWindow when the cancel button is clicked
+     *
+     * @param event Cancel button event
+     * @throws IOException IOException
+     * */
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
 
@@ -244,6 +270,13 @@ public class AddProduct implements Initializable {
         stage.setScene(new Scene(scene));
         stage.show();
     }
+
+    /*
+     * Event handler that checks user input for validity and then adds the product in inventory
+     *
+     * @param event Save button event
+     * @throws IOException IOException
+     * */
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
 
@@ -259,15 +292,31 @@ public class AddProduct implements Initializable {
                 if(!checkStockValues(min,max,inv)){
                     throw new NumberFormatException();
                 } else {
-                    Product temp = new Product(id,name,price,inv,min,max);
-                    temp.getAllAssociatedParts().setAll(bottomTable);
-                    Inventory.addProduct(temp);
+                    try {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Confirm Save");
+                        alert.setContentText("Click 'Ok' to save changes.");
+                        alert.setHeaderText("Are you sure you want to save?");
 
-                    stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-                    scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
-                    stage.setScene(new Scene(scene));
-                    stage.setTitle("Inventory Management System");
-                    stage.show();
+                        Optional<ButtonType> result = alert.showAndWait();
+
+                        if (result.get() == ButtonType.OK) {
+                            newProduct.setId(id);
+                            newProduct.setName(name);
+                            newProduct.setStock(inv);
+                            newProduct.setPrice(price);
+                            newProduct.setMin(min);
+                            newProduct.setMax(max);
+
+                            Inventory.addProduct(newProduct);
+
+                            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                            scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+                            stage.setScene(new Scene(scene));
+                            stage.setTitle("Inventory Management System");
+                            stage.show();
+                        }
+                    } catch (NoSuchElementException ignored) {}
                 }
             } catch(NumberFormatException e) {
                 errorMessage("Invalid Input","Inventory Level must be between Min and Max", Alert.AlertType.ERROR);
@@ -281,20 +330,43 @@ public class AddProduct implements Initializable {
         }
     }
 
-    public void onActionRemoveItem(ActionEvent actionEvent) {
+    /*
+     * If an item on the bottom table is selected and the remove button is clicked, this event
+     * handler will fire and on user confirmation, remove the item from the bottom table.
+     *
+     * @param actionEvent Remove button event
+     * @throws IOException IOException
+     * */
+    public void onActionRemoveItem(ActionEvent actionEvent) throws IOException {
 
         boolean success = false;
 
-        if(!table2.getSelectionModel().isEmpty() && confirmation()){
-            bottomTable.remove(table2.getSelectionModel().getSelectedItem());
-            success = true;
-        }
+        try {
+            if(!table2.getSelectionModel().isEmpty())
+            {
+                if(confirmation()){
+                    newProduct.deleteAssociatedPart(table2.getSelectionModel().getSelectedItem());
+                    System.out.println("successful removal");
+                    success = true;
+                }
+            }
+            if(!success) {
+                if(table2.getSelectionModel().isEmpty()){
+                    errorMessage("Please select a part.");
+                }
+            }
 
-        if(!success) {
-            errorMessage("We did not remove a part.");
+        } catch (NoSuchElementException e) {
+            errorMessage("Action canceled", "Nothing was removed.", Alert.AlertType.INFORMATION);
         }
     }
 
+    /*
+     * Populates table1 with data from each of the parts that are passed in. Table1 should always contain a list of the
+     * parts in inventory.
+     *
+     * @param parts List of parts to be represented in each row
+     * */
     void populateTable1(ObservableList<Part> parts){
 
         table1.setItems(parts);
@@ -305,6 +377,11 @@ public class AddProduct implements Initializable {
         table1PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
+    /*
+     * Populates table2 with data from each of the parts that are passed in. Table2 should initially be empty and update when part are added or removed
+     *
+     * @param parts List of parts to be represented in each row
+     * */
     void populateTable2(ObservableList<Part> parts){
 
         table2.setItems(parts);
@@ -315,11 +392,17 @@ public class AddProduct implements Initializable {
         table2PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
+    /*
+     * Called when initializing Add Product scene. Generates unique ID and calls populateTable1().
+     * Also sets up event handler to filter parts in top table based on input value
+     *
+     * @param url location used to resolve relative paths for the root object, or null
+     * @param resourceBundle resources used to localize root object or null
+     * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         productIDText.setPromptText(String.valueOf(generateID()));
-        table2.getItems().clear();
         populateTable1(Inventory.getAllParts());
 
         searchPartText.setOnAction(new EventHandler<ActionEvent>() {

@@ -3,7 +3,7 @@ package sealey.javafxinventorysystem.models;
 /*
 * @author Max Sealey
 *
-* The InHouse class inherits attributes from abstract class Part, and adds Machine ID number.
+* The InHouse class inherits attributes from abstract class Part and adds Machine ID attribute.
 * */
 public class InHouse extends Part {
 

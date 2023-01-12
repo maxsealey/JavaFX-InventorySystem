@@ -12,17 +12,24 @@ import java.io.IOException;
 /*
 * @author Max Sealey
 *
-* The Main class sets the initial scene and launches the application. The javadoc folder is located
-* in the top level directory of the project (JavaFX-InventorySystem/javadoc).
+* The Main class sets the initial scene and launches the application.
+*
+* <p>The javadoc folder is located in the top level directory of the project (JavaFX-InventorySystem/javadoc).</p>
+*
+* <p><b>
+* FUTURE ENHANCEMENT: To extend the functionality of the application, I would add a way to save the adjustments
+* made to the data upon exiting the program. This could be done via interacting with a relational database or creating a
+* csv file to store the data.
+* </b></p>
 * */
 
 public class Main extends Application {
 
     /*
-    * The start() method retrieves the FXML file for the main window and sets the scene.
+    * The start() method retrieves the FXML file for the main window and sets the scene. Calls the testData method, which can be removed or replaced.
     *
-    * @param stage Stage that will display the initial scene
-    * @throws IOException Catches issues and displays an error message if there is a problem initializing the program
+    * @param stage Stage to contain the scenes
+    * @throws IOException Catches issues and displays an error message if there is a problem starting the program
     * */
     @Override
     public void start(Stage stage) throws IOException {
@@ -36,12 +43,16 @@ public class Main extends Application {
         stage.show();
     }
 
-    private static void testData() {
+    /*
+    * I used this testData method to add items to the inventory upon starting the program. Can be removed or replaced.
+    * */
+
+    private void testData() {
 
         OutSourced part1 = new OutSourced(1, "wheel", 34.99, 16, 5, 30);
         OutSourced part2 = new OutSourced(2, "brake", 29.99, 18, 10, 25);
         OutSourced part3 = new OutSourced(3, "headlight", 49.99, 18, 10, 25);
-        InHouse part4 = new InHouse(4, "handlebars", 19.99, 5, 5, 15);
+        InHouse part4 = new InHouse(4, "handlebars", 19.99, 8, 5, 15);
         InHouse part5 = new InHouse(5, "chain", 64.99, 9, 7, 20);
         InHouse part6 = new InHouse(6, "steering wheel", 54.99, 9, 7, 20);
 

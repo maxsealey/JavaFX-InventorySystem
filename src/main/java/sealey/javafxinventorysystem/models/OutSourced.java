@@ -3,7 +3,7 @@ package sealey.javafxinventorysystem.models;
 /*
  * @author Max Sealey
  *
- * The Outsourced class inherits attributes from abstract class Part, and adds the company name.
+ * The Outsourced class inherits attributes from abstract class Part and adds a 'Company Name' attribute.
  * */
 
 public class OutSourced extends Part {

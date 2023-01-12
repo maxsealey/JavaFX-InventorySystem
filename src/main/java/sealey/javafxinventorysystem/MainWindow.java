@@ -1,6 +1,5 @@
 package sealey.javafxinventorysystem;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,9 +25,7 @@ import java.util.ResourceBundle;
 /*
 * @author Max Sealey
 *
-* The MainWindow controller controls the components of the initial scene, which acts as the "home page" for the
-* application. It displays the Parts and Products tables, and for each respective table buttons to switch to
-* Add and Modify scenes, a button to delete an item, and a search bar. It also contains a button to exit the application.
+* The MainWindow controller controls the components of the initial scene and acts as the "home page" for the application.
 * */
 
 public class MainWindow implements Initializable {
@@ -78,14 +75,18 @@ public class MainWindow implements Initializable {
     private TextField searchProductText;
 
     /*
-    * notFound() shows a 404 alert dialog box. Called in the filter methods
-    * */
-    private void notFound() {
+     * Method displays alert and that sets title, content, and alert type
+     *
+     * @param title Alert title
+     * @param content Alert message
+     * @param type Alert type
+     * */
+    void errorMessage(String title, String content, Alert.AlertType type) {
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("404");
-        alert.setContentText("Your search did not match any results. Please try again.");
-        alert.setHeaderText("Not Found");
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setAlertType(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 
@@ -101,6 +102,11 @@ public class MainWindow implements Initializable {
         alert.showAndWait();
     }
 
+    /*
+     * Displays alert asking for confirmation that item should be deleted, returns true if Ok button clicked, false otherwise
+     *
+     * @return boolean true or false
+     * */
     private boolean confirmation(){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Confirm Deletion");
@@ -117,11 +123,11 @@ public class MainWindow implements Initializable {
     }
 
     /*
-    * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
-    *
-    * @param str The string to be checked
-    * @return boolean Returns true if string is also an integer, false if exception is caught
-    */
+     * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
+     *
+     * @param str The string to be checked
+     * @return boolean Returns true if string is also an integer, false if exception is caught
+     */
     private boolean isInt(String str) {
 
         try {
@@ -131,12 +137,8 @@ public class MainWindow implements Initializable {
     }
 
     /*
-     * The filterParts() method checks a string input (searchPartText TextField)
-     * and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
-     * Returns an ObservableList containing all parts if the TextField is empty. If the search term does not
-     * find any matches, error message is displayed in dialog box.
+     * The filterParts() method checks a string and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
      *
-     * @param search String retrieved from searchPartText
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Parts.
      * */
@@ -156,7 +158,7 @@ public class MainWindow implements Initializable {
             return Inventory.getAllParts();
         }
         else if (temp.isEmpty()) {
-            notFound();
+            errorMessage("404", "Your search did not match the id or name of any parts. Please try again.", Alert.AlertType.INFORMATION);
             return Inventory.getAllParts();
         } else {
             return temp;
@@ -164,13 +166,9 @@ public class MainWindow implements Initializable {
     }
 
     /*
-     * The filterProducts() method checks a string input (searchProductText TextField)
-     * and returns a list of Products whose name contains the string, and/or whose ID is equal to the string.
-     * Returns an ObservableList containing all products if the TextField is empty. If the search term does not
-     * find any matches, error message is displayed in dialog box.
+     * The filterProducts() method checks a string and returns a list of Products whose name contains the string, and/or whose ID is equal to the string.
      *
-     * @param search String retrieved from searchProductText
-     * @return temp ObservableList of Products containing all products whose name contains the search parameter
+     * @return ObservableList of Products containing all products whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Products.
      * */
     private ObservableList<Product> filterProducts(){
@@ -189,7 +187,7 @@ public class MainWindow implements Initializable {
             return Inventory.getAllProducts();
         }
         else if (temp.isEmpty()) {
-            notFound();
+            errorMessage("404", "Your search did not match the id or name of any parts. Please try again.", Alert.AlertType.INFORMATION);
             return Inventory.getAllProducts();
         } else {
             return temp;
@@ -199,8 +197,8 @@ public class MainWindow implements Initializable {
     /*
     * The onActionAddPart() event handler sets the AddPart scene when the Add Button under the parts table is clicked.
     *
-    * @param event ActionEvent object for the Add button
-    * @throws IOException Throws error message if there is an issue with the event
+    * @param event Add button event
+    * @throws IOException IOException
     * */
     @FXML
     void onActionAddPart(ActionEvent event) throws IOException {
@@ -215,8 +213,8 @@ public class MainWindow implements Initializable {
     /*
      * The onActionAddProduct() event handler sets the AddProduct scene when the Add Button under the products table is clicked.
      *
-     * @param event ActionEvent object for the Add button
-     * @throws IOException Throws error message if there is an issue with the event
+     * @param event Add Product button event
+     * @throws IOException IOException
      * */
     @FXML
     void onActionAddProduct(ActionEvent event) throws IOException {
@@ -254,25 +252,28 @@ public class MainWindow implements Initializable {
 
     /*
      * The onActionDeleteProduct() event handler deletes the selected product(s) when delete button is clicked.
-     * If an item is not selected or deleted, a dialog box displays an error message.
+     * If an item is not selected or deleted, a dialog box displays an error message. Won't let you delete a product with any associated parts.
      *
-     * @param event ActionEvent object for the Delete button
-     * @throws IOException Throws error message if there is an issue with the event
+     * @param event Delete button event
+     * @throws IOException IOException
      * */
     @FXML
     void onActionDeleteProduct(ActionEvent event) {
 
+        boolean success = false;
         try {
-            if(!productTable.getSelectionModel().isEmpty()) {
-                if (productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty() && confirmation()) {
-                    Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
-                } else if (!productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()){
+            if(productTable.getSelectionModel().isEmpty()) {
+                couldNotDelete("Please select a product.");
+               throw new NoSuchElementException();
+            } else {
+                if(confirmation() && productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()){
+                    success = Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
+                } else if(!productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()){
                     couldNotDelete("You must remove the parts associated with this product in order to delete it.");
                     throw new NoSuchElementException();
+                } else {
+                    throw new NoSuchElementException();
                 }
-            } else {
-                couldNotDelete("Please select a product.");
-                throw new NoSuchElementException();
             }
         } catch (NoSuchElementException e) {
             return;
@@ -280,28 +281,33 @@ public class MainWindow implements Initializable {
     }
 
     /*
-     * The onActionExit() event handler closes the application when exit button is clicked.
+     * The onActionExit() event handler closes the application when exit button is clicked and user confirms with alert.
      *
-     * @param event ActionEvent object for the Exit button
+     * @param event Exit button event
      * */
     @FXML
     void onActionExit(ActionEvent event) {
 
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setHeaderText("Are you sure you want to exit?");
-        alert.setContentText("Your data will not be saved.");
+        try {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Confirm Exit");
+            alert.setHeaderText("Are you sure you want to exit?");
+            alert.setContentText("Changes to your data may not be saved. Click 'Ok' to continue.");
 
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.get() == ButtonType.OK) {
-            System.exit(0);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                System.exit(0);
+            }
+        } catch (NoSuchElementException e){
+            return;
         }
     }
 
     /*
      * The onActionModifyPart() event handler sets the ModifyPart scene when the Modify Button under the parts table is clicked.
+     * If item is selected, sends part's data to ModifyPart controller.
      *
-     * @param event ActionEvent object for the Modify button
+     * @param event Modify button event
      * @throws IOException Throws error message if there is an issue with the event
      * */
     @FXML
@@ -331,6 +337,7 @@ public class MainWindow implements Initializable {
 
     /*
      * The onActionModifyProduct() event handler sets the ModifyProduct scene when the Modify Button under the products table is clicked.
+     * If item is selected, sends selected product's data to Modify Product controller.
      *
      * @param event ActionEvent object for the Modify button
      * @throws IOException Throws error message if there is an issue with the event
@@ -381,9 +388,9 @@ public class MainWindow implements Initializable {
     }
 
     /*
-    * The initialize() method is called when MainWindow controller is initialized. It displays all products currently in the inventory,
-    * and then sets event listeners on the search bar TextFields. When the search field is selected and the 'enter' button is clicked,
-    * the event handler is fired and the table is updated.
+    * Called when MainWindow controller is initialized. It displays all products currently in the inventory,
+    * and then sets event listeners on the search bar TextFields. When the search field is selected
+    * and the 'enter' button is clicked, the event handler is fired and the table is updated.
     *
     * @param url location used to resolve relative paths for the root object, or null
     * @param resourceBundle resources used to localize root object or null

@@ -21,10 +21,7 @@ import java.util.ResourceBundle;
 /*
  * @author Max Sealey
  *
- * The AddPart controller controls the components for the AddPart scene, and displays radio buttons to indicate whether the created item is In-House or Outsourced,
- * a disabled TextField containing an auto-generated unique ID #, and TextFields for the item's name, inventory amount, price, max items possible, min items possible,
- * and either the machine ID (when In-House radio button is selected) or company name (when Outsourced radio button is selected). Below that is the save button and the
- * cancel button, both of which navigate back to the MainWindow, though only the save button adds the entered data into the table (upon input validation).
+ * The AddPart controller controls the components used to create and add a part to the inventory.
  * */
 
 public class AddPart implements Initializable {
@@ -71,12 +68,12 @@ public class AddPart implements Initializable {
     private Button saveButton;
 
     /*
-    * The search() method is a helper function that returns a boolean indicating whether an integer is already being used as an ID number for an existing part.
-    * This is only called in the generateID() method to ensure that the auto-generated ID is unique.
-    *
-    * @param id Integer to be checked for ID uniqueness
-    * @return boolean True if ID belongs to existing part, False otherwise
-    * */
+     * Helper function that returns a boolean indicating whether an integer is already being used as an ID number
+     * This is only called in the generateID() method to ensure that the auto-generated ID is unique.
+     *
+     * @param id Integer to be checked for ID uniqueness
+     * @return boolean True if ID belongs to existing part, False otherwise
+     * */
     boolean search(int id){
 
         for(Part p : Inventory.getAllParts())
@@ -89,9 +86,9 @@ public class AddPart implements Initializable {
     }
 
     /*
-     * The generateID() method is a helper function that generates an ID number for created part. Always returns the next unique integer in sequential order
+     * The generateID() method is a helper function that generates an ID number for created part. Always returns the next positive available ID
      *
-     * @return id Integer that is either 1 (if List is empty), or the next unique integer
+     * @return id Unique part ID
      * */
     int generateID() {
 
@@ -106,6 +103,13 @@ public class AddPart implements Initializable {
         return id;
     }
 
+    /*
+     * Method displays alert and that sets title, content, and alert type
+     *
+     * @param title Alert title
+     * @param content Alert message
+     * @param type Alert type
+     * */
     void errorMessage(String title, String content, Alert.AlertType type) {
 
         Alert alert = new Alert(Alert.AlertType.NONE);
@@ -115,17 +119,26 @@ public class AddPart implements Initializable {
         alert.showAndWait();
     }
 
+    /*
+     * User input validation for Inventory level, max, and min values
+     *
+     * @param min minimum inventory level
+     * @param max maximum inventory level
+     * @param stock current inventory level
+     *
+     * @return boolean True if min is positive and less than stock, and stock is less than max
+     * */
     boolean checkStockValues(int min, int max, int stock){
 
-        return max > stock && min < stock;
+        return max > stock && min < stock && min >= 1;
     }
 
     /*
-    * The onActionCancel() event handler navigates back to the MainWindow without adding any data to Inventory When the Cancel button is clicked.
-    *
-    * @param event ActionEvent object for the Cancel button
-    * @throws IOException Throws error message if there is an issue with the event
-    * */
+     * Event handler that sets scene back to MainWindow when the cancel button is clicked
+     *
+     * @param event Cancel button event
+     * @throws IOException IOException
+     * */
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
 
@@ -137,10 +150,10 @@ public class AddPart implements Initializable {
     }
 
     /*
-     * The onActionSave() event handler checks for valid input when the Save button is clicked, and if valid, adds Part to Inventory and navigates back to the MainWindow.
+     * Event handler that checks user input for validity and then adds the part to inventory
      *
-     * @param event ActionEvent object for the Save button
-     * @throws IOException Throws error message if there is an issue with the event
+     * @param event Save button event
+     * @throws IOException IOException
      * */
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
@@ -157,11 +170,11 @@ public class AddPart implements Initializable {
                     throw new NumberFormatException();
                 } else {
                     if(inhouseRadio.isSelected()){
-                        InHouse newPart = new InHouse(id,name,price,inv,max,min);
+                        InHouse newPart = new InHouse(id,name,price,inv,min,max);
                         newPart.setMachineId(Integer.parseInt(machineIDText.getText()));
                         Inventory.addPart(newPart);
                     } else {
-                        OutSourced newPart = new OutSourced(id,name,price,inv,max,min);
+                        OutSourced newPart = new OutSourced(id,name,price,inv,min,max);
                         newPart.setCompanyName(machineIDText.getText());
                         Inventory.addPart(newPart);
                     }
@@ -185,10 +198,10 @@ public class AddPart implements Initializable {
     }
 
     /*
-    * When the In-House radio button is selected, the Machine ID label is displayed.
-    *
-    * @param event ActionEvent object for the In-House radio button
-    * */
+     * Event handler that changes the text of the MachineID/Company Name Label on selection of Outsourced radio button
+     *
+     * @param event Outsourced radio button selection event
+     * */
     @FXML
     void onActionCompanyLabel(ActionEvent event) {
 
@@ -196,9 +209,9 @@ public class AddPart implements Initializable {
     }
 
     /*
-     * When the Outsourced radio button is selected, the Company Name label is displayed.
+     * Event handler that changes the text of the MachineID/Company Name Label on selection of In-House radio button
      *
-     * @param event ActionEvent object for the Outsourced radio button
+     * @param event In-House radio button selection event
      * */
     @FXML
     public void onActionMachineLabel(ActionEvent actionEvent) {
@@ -207,12 +220,11 @@ public class AddPart implements Initializable {
     }
 
     /*
-    * The initialize() method is called when the AddPart controller is initialized. The prompt text property of the disabled partIDText TextField
-    * is set to an auto-generated ID number.
-    *
-    * @param url location used to resolve relative paths for the root object, or null
-    * @param resourceBundle resources used to localize root object or null
-    * */
+     * Called when initializing AddPart scene, generates unique part ID
+     *
+     * @param url location used to resolve relative paths for the root object, or null
+     * @param resourceBundle resources used to localize root object or null
+     * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 

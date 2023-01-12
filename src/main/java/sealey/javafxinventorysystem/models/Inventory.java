@@ -4,12 +4,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /*
-* @author Max Sealey
-*
-* The Inventory class contains two ObservableLists, one to contain a list of all parts,
-* and one to contain a list of all products. It also contains lookup, add, update, and
-* delete methods for each list, and methods to get and set the entirety of each individual list.
-* */
+ * @author Max Sealey
+ *
+ * The Inventory class contains a list of all products and parts in the inventory, methods to
+ * retrieve and set the lists; and methods to update, add, lookup, and delete individual parts and products.
+ * */
 
 public class Inventory {
 
@@ -18,7 +17,7 @@ public class Inventory {
 
     /*
     * The getAllParts() method returns the list of all parts in the inventory. "Getter" for
-    * the allParts list.
+    * the allParts list attribute.
     *
     * @return allParts List of parts in the inventory
     * */
@@ -29,7 +28,7 @@ public class Inventory {
 
     /*
      * The setAllParts() method accepts a list of Part objects and assigns its values to the allParts list attribute.
-     * "Setter" for the private allParts list. Destructive, overwrites any data already in the inventory.
+     * "Setter" for the allParts list attribute.
      *
      * @param allParts List of parts to be stored in the inventory
      * */
@@ -40,7 +39,7 @@ public class Inventory {
 
     /*
      * The getAllProducts() method returns a list of all products in the inventory. "Getter" for
-     * the allProducts list.
+     * the allProducts list attribute.
      *
      * @return allProducts List of products in the inventory
      * */
@@ -51,9 +50,9 @@ public class Inventory {
 
     /*
      * The setAllProducts() method accepts a list of Product objects and assigns its values to the allProducts list attribute.
-     * "Setter" for the private allProducts list. Destructive, overwrites any data already in the inventory.
+     * "Setter" for the allProducts list attribute.
      *
-     * @param allParts List of parts to be stored in the inventory
+     * @param allProducts List of products to be stored in the inventory
      * */
     public static void setAllProducts(ObservableList<Product> allProducts) {
 
@@ -63,33 +62,33 @@ public class Inventory {
     /*
     * The addPart() method takes in a Part object and adds it to the allParts list.
     *
-    * @param part Part to be added to list
+    * @param newPart Part to be added to list
     * */
-    public static void addPart(Part part) {
+    public static void addPart(Part newPart) {
 
-        allParts.add(part);
+        allParts.add(newPart);
     }
 
     /*
     * The addProduct() method takes in a Product object and adds it to the allProducts list.
     *
-    * @param product Product to be added to list
+    * @param newProduct Product to be added to list
     * */
-    public static void addProduct(Product product) {
+    public static void addProduct(Product newProduct) {
 
-        allProducts.add(product);
+        allProducts.add(newProduct);
     }
 
     /*
     * lookupPart() is an overloaded method that takes in an integer and searches the Parts list for an object with the matching id number.
     *
-    * @param partID Integer to compare with each object's id number
-    * @return a Parts object with matching id number or null  (if not found)
+    * @param partId Integer to compare with each object's id number
+    * @return a Parts object with matching id number or null (if not found)
     * */
-    public static Part lookupPart(int partID) {
+    public static Part lookupPart(int partId) {
 
         for(Part a : getAllParts()) {
-            if(a.getId() == partID){ return a; }
+            if(a.getId() == partId){ return a; }
         }
         return null;
     }
@@ -97,13 +96,13 @@ public class Inventory {
     /*
      * lookupProduct() is an overloaded method that takes in an integer and searches the Products list for an object with the matching id number.
      *
-     * @param prodID Integer to compare with each object's id number
+     * @param productId Integer to compare with each object's id number
      * @return a Product object with matching id number or null  (if not found)
      * */
-    public static Product lookupProduct(int prodID) {
+    public static Product lookupProduct(int productId) {
 
         for(Product a : getAllProducts()) {
-            if(a.getId() == prodID){ return a; }
+            if(a.getId() == productId){ return a; }
         }
         return null;
     }
@@ -148,34 +147,45 @@ public class Inventory {
         return temp;
     }
 
-
+    /*
+    * updatePart() takes in the updated part and its index, then replaces the original part
+    *
+    * @param index Int index of part to be modified
+    * @param selectedPart Part object (either InHouse or Outsourced) with updated data
+    * */
     public static void updatePart(int index, Part selectedPart) {
         allParts.set(index, selectedPart);
     }
 
-    public static void updateProduct(int index, Product product) {
-        allProducts.set(index, product);
+    /*
+     * updateProduct() takes in the updated product and its index, then replaces the original product
+     *
+     * @param index Integer index of part to be modified
+     * @param newProduct Product object with updated data
+     * */
+    public static void updateProduct(int index, Product newProduct) {
+        allProducts.set(index, newProduct);
     }
 
     /*
     * The deletePart() method attempts to remove a part from the list and returns true if successful
     *
-    * @param part Part object to be deleted
+    * @param selectedPart Part object to be deleted
     * @return boolean True if successful, False if unsuccessful
     * */
-    public static boolean deletePart(Part part) {
+    public static boolean deletePart(Part selectedPart) {
 
-        return Inventory.getAllParts().remove(part);
+        return Inventory.getAllParts().remove(selectedPart);
     }
 
     /*
-     * The deleteProduct() method attempts to remove a part from the list and returns true if successful
+     * The deleteProduct() method attempts to remove a product from the list and returns true if successful
      *
-     * @param part Part object to be deleted
+     * @param selectedProduct Part object to be deleted
      * @return boolean True if successful, False if unsuccessful
      * */
-    public static boolean deleteProduct(Product product) {
+    public static boolean deleteProduct(Product selectedProduct) {
 
-        return Inventory.getAllProducts().remove(product);
+        return Inventory.getAllProducts().remove(selectedProduct);
     }
 }
