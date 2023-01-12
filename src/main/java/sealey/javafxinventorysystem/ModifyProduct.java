@@ -17,10 +17,16 @@ import sealey.javafxinventorysystem.models.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.function.UnaryOperator;
+
+/*
+ * @author Max Sealey
+ *
+ * The ModifyProduct controller controls the components used to edit the values and associated parts of the selected product.
+ * */
 
 public class ModifyProduct implements Initializable {
 
@@ -90,22 +96,9 @@ public class ModifyProduct implements Initializable {
     @FXML
     private TableColumn<Part, Double> table2PriceCol;
 
-    ObservableList<Part> bottomTable = FXCollections.observableArrayList();
+    Product updatedProduct = new Product();
 
-    /*
-     * notFound() shows a 404 alert dialog box. Called in the filter methods
-     * */
-
-    private void notFound() {
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("404");
-        alert.setContentText("Your search did not match any results. Please try again.");
-        alert.setHeaderText("Not Found");
-        alert.showAndWait();
-    }
-
-    private boolean confirmation(){
+    boolean confirmation(){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Confirm Part Removal");
         alert.setContentText("Click 'Ok' to proceed.");
@@ -125,6 +118,15 @@ public class ModifyProduct implements Initializable {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setContentText(content);
         alert.setHeaderText("Something went wrong.");
+        alert.showAndWait();
+    }
+
+    void errorMessage(String title, String content, Alert.AlertType type) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setAlertType(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 
@@ -178,18 +180,9 @@ public class ModifyProduct implements Initializable {
         } catch (NumberFormatException e) { return false; }
     }
 
-    void errorMessage(String title, String content, Alert.AlertType type) {
-
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setAlertType(type);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
     boolean checkStockValues(int min, int max, int stock){
 
-        return max > stock && min < stock;
+        return max > stock && min < stock && min >= 1;
     }
 
     /*
@@ -218,7 +211,7 @@ public class ModifyProduct implements Initializable {
             return Inventory.getAllParts();
         }
         else if (temp.isEmpty()) {
-            notFound();
+            errorMessage("404","Your search did not match any results. Please try again.", Alert.AlertType.INFORMATION);
             return Inventory.getAllParts();
         } else {
             return temp;
@@ -249,15 +242,33 @@ public class ModifyProduct implements Initializable {
                 if(!checkStockValues(min,max,inv)){
                     throw new NumberFormatException();
                 } else {
-                    Product temp = new Product(id,name,price,inv,min,max);
-                    temp.getAllAssociatedParts().setAll(bottomTable);
-                    Inventory.updateProduct(id - 1,temp);
+                    try {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Confirm Save");
+                        alert.setContentText("Click 'Ok' to save changes.");
+                        alert.setHeaderText("Are you sure you want to save?");
 
-                    stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-                    scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
-                    stage.setScene(new Scene(scene));
-                    stage.setTitle("Inventory Management System");
-                    stage.show();
+                        Optional<ButtonType> result = alert.showAndWait();
+
+                        if (result.get() == ButtonType.OK) {
+                            updatedProduct.setId(id);
+                            updatedProduct.setName(name);
+                            updatedProduct.setStock(inv);
+                            updatedProduct.setPrice(price);
+                            updatedProduct.setMin(min);
+                            updatedProduct.setMax(max);
+
+                            updatedProduct.setAllAssociatedParts(updatedProduct.getAllAssociatedParts());
+                            Inventory.updateProduct(id-1,updatedProduct);
+
+                            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                            scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+                            stage.setScene(new Scene(scene));
+                            stage.setTitle("Inventory Management System");
+                            stage.show();
+                        }
+                    } catch (NoSuchElementException ignored) {
+                    }
                 }
             } catch(NumberFormatException e) {
                 errorMessage("Invalid Input","Inventory Level must be between Min and Max", Alert.AlertType.ERROR);
@@ -275,40 +286,56 @@ public class ModifyProduct implements Initializable {
     void onActionAdd(ActionEvent event) throws IOException {
 
         if(!table1.getSelectionModel().isEmpty()) {
-            bottomTable.add(table1.getSelectionModel().getSelectedItem());
-            populateTable2(bottomTable);
+            updatedProduct.addAssociatedPart(table1.getSelectionModel().getSelectedItem());
+            populateTable2(updatedProduct.getAllAssociatedParts());
         } else {
             errorMessage("Please select a part.");
         }
     }
-    public void onActionRemove(ActionEvent actionEvent) {
+    public void onActionRemove(ActionEvent actionEvent) throws IOException {
 
         boolean success = false;
 
-        if(!table2.getSelectionModel().isEmpty() && confirmation()){
-            bottomTable.remove(table2.getSelectionModel().getSelectedItem());
-            populateTable2(bottomTable);
-            success = true;
+        try {
+            if(!table2.getSelectionModel().isEmpty())
+            {
+                if(confirmation()){
+                    updatedProduct.deleteAssociatedPart(table2.getSelectionModel().getSelectedItem());
+                    System.out.println("successful removal");
+                    success = true;
+                }
+            }
+            if(!success) {
+                if(table2.getSelectionModel().isEmpty()){
+                    errorMessage("Please select a part.");
+                }
+            }
+
+        } catch (NoSuchElementException e) {
+            errorMessage("Action canceled", "Nothing was removed.", Alert.AlertType.INFORMATION);
         }
 
-        if(!success) {
-            errorMessage("We did not remove a part.");
-        }
     }
 
     public void sendProduct(Product product){
 
-        productIDText.setPromptText(String.valueOf(product.getId()));
-        productNameText.setText(product.getName());
-        inventoryText.setText(String.valueOf(product.getStock()));
-        priceText.setText(String.valueOf(product.getPrice()));
-        maxText.setText(String.valueOf(product.getMax()));
-        minText.setText(String.valueOf(product.getMin()));
+        updatedProduct.setId(product.getId());
+        updatedProduct.setName(product.getName());
+        updatedProduct.setStock(product.getStock());
+        updatedProduct.setPrice(product.getPrice());
+        updatedProduct.setMin(product.getMin());
+        updatedProduct.setMax(product.getMax());
+
+        productIDText.setPromptText(String.valueOf(updatedProduct.getId()));
+        productNameText.setText(updatedProduct.getName());
+        inventoryText.setText(String.valueOf(updatedProduct.getStock()));
+        priceText.setText(String.valueOf(updatedProduct.getPrice()));
+        maxText.setText(String.valueOf(updatedProduct.getMax()));
+        minText.setText(String.valueOf(updatedProduct.getMin()));
 
         if(!product.getAllAssociatedParts().isEmpty()){
-
-            bottomTable.addAll(product.getAllAssociatedParts());
-            populateTable2(bottomTable);
+            updatedProduct.setAllAssociatedParts(product.getAllAssociatedParts());
+            populateTable2(updatedProduct.getAllAssociatedParts());
         }
     }
 
@@ -319,7 +346,7 @@ public class ModifyProduct implements Initializable {
         table1IDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         table1NameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         table1InvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        table1InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        table1PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
     private void populateTable2(ObservableList<Part> parts) {
@@ -329,13 +356,12 @@ public class ModifyProduct implements Initializable {
         table2IDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         table2NameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         table2InvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        table2InvCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        table2PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         productIDText.setPromptText(String.valueOf(generateID()));
-        table2.getItems().clear();
         populateTable1(Inventory.getAllParts());
 
         searchProductText.setOnAction(new EventHandler<ActionEvent>() {

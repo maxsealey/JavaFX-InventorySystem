@@ -1,6 +1,5 @@
 package sealey.javafxinventorysystem;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,9 +17,16 @@ import sealey.javafxinventorysystem.models.Product;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+/*
+ * @author Max Sealey
+ *
+ * The AddProduct controller controls the components used to create and add a new product to the inventory.
+ * */
 
 public class AddProduct implements Initializable {
 
@@ -90,20 +96,7 @@ public class AddProduct implements Initializable {
     @FXML
     private TableColumn<Part, Double> table2PriceCol;
 
-    ObservableList<Part> bottomTable = FXCollections.observableArrayList();
-
-    /*
-     * notFound() shows a 404 alert dialog box. Called in the filter methods
-     * */
-
-    void notFound() {
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("404");
-        alert.setContentText("Your search did not match any results. Please try again.");
-        alert.setHeaderText("Not Found");
-        alert.showAndWait();
-    }
+    Product newProduct = new Product();
 
     boolean confirmation(){
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -125,6 +118,15 @@ public class AddProduct implements Initializable {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setContentText(content);
         alert.setHeaderText("Something went wrong.");
+        alert.showAndWait();
+    }
+
+    void errorMessage(String title, String content, Alert.AlertType type) {
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setAlertType(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 
@@ -178,18 +180,9 @@ public class AddProduct implements Initializable {
         } catch (NumberFormatException e) { return false; }
     }
 
-    void errorMessage(String title, String content, Alert.AlertType type) {
-
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setAlertType(type);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
     boolean checkStockValues(int min, int max, int stock){
 
-        return max > stock && min < stock;
+        return max > stock && min < stock && min >= 1;
     }
 
     /*
@@ -218,7 +211,7 @@ public class AddProduct implements Initializable {
             return Inventory.getAllParts();
         }
         else if (temp.isEmpty()) {
-            notFound();
+            errorMessage("404","Your search did not return any results. Please try again.", Alert.AlertType.INFORMATION);
             return Inventory.getAllParts();
         } else {
             return temp;
@@ -229,8 +222,8 @@ public class AddProduct implements Initializable {
     void onActionAdd(ActionEvent event) throws IOException {
 
         if(!table1.getSelectionModel().isEmpty()) {
-            bottomTable.add(table1.getSelectionModel().getSelectedItem());
-            populateTable2(bottomTable);
+            newProduct.addAssociatedPart(table1.getSelectionModel().getSelectedItem());
+            populateTable2(newProduct.getAllAssociatedParts());
         } else {
             errorMessage("Please select a part.");
         }
@@ -259,15 +252,31 @@ public class AddProduct implements Initializable {
                 if(!checkStockValues(min,max,inv)){
                     throw new NumberFormatException();
                 } else {
-                    Product temp = new Product(id,name,price,inv,min,max);
-                    temp.getAllAssociatedParts().setAll(bottomTable);
-                    Inventory.addProduct(temp);
+                    try {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Confirm Save");
+                        alert.setContentText("Click 'Ok' to save changes.");
+                        alert.setHeaderText("Are you sure you want to save?");
 
-                    stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-                    scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
-                    stage.setScene(new Scene(scene));
-                    stage.setTitle("Inventory Management System");
-                    stage.show();
+                        Optional<ButtonType> result = alert.showAndWait();
+
+                        if (result.get() == ButtonType.OK) {
+                            newProduct.setId(id);
+                            newProduct.setName(name);
+                            newProduct.setStock(inv);
+                            newProduct.setPrice(price);
+                            newProduct.setMin(min);
+                            newProduct.setMax(max);
+
+                            Inventory.addProduct(newProduct);
+
+                            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                            scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+                            stage.setScene(new Scene(scene));
+                            stage.setTitle("Inventory Management System");
+                            stage.show();
+                        }
+                    } catch (NoSuchElementException ignored) {}
                 }
             } catch(NumberFormatException e) {
                 errorMessage("Invalid Input","Inventory Level must be between Min and Max", Alert.AlertType.ERROR);
@@ -281,17 +290,27 @@ public class AddProduct implements Initializable {
         }
     }
 
-    public void onActionRemoveItem(ActionEvent actionEvent) {
+    public void onActionRemoveItem(ActionEvent actionEvent) throws IOException {
 
         boolean success = false;
 
-        if(!table2.getSelectionModel().isEmpty() && confirmation()){
-            bottomTable.remove(table2.getSelectionModel().getSelectedItem());
-            success = true;
-        }
+        try {
+            if(!table2.getSelectionModel().isEmpty())
+            {
+                if(confirmation()){
+                    newProduct.deleteAssociatedPart(table2.getSelectionModel().getSelectedItem());
+                    System.out.println("successful removal");
+                    success = true;
+                }
+            }
+            if(!success) {
+                if(table2.getSelectionModel().isEmpty()){
+                    errorMessage("Please select a part.");
+                }
+            }
 
-        if(!success) {
-            errorMessage("We did not remove a part.");
+        } catch (NoSuchElementException e) {
+            errorMessage("Action canceled", "Nothing was removed.", Alert.AlertType.INFORMATION);
         }
     }
 
@@ -319,7 +338,6 @@ public class AddProduct implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         productIDText.setPromptText(String.valueOf(generateID()));
-        table2.getItems().clear();
         populateTable1(Inventory.getAllParts());
 
         searchPartText.setOnAction(new EventHandler<ActionEvent>() {
