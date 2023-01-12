@@ -19,6 +19,13 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+
+/*
+ * @author Max Sealey
+ *
+ * The ModifyPart controller controls the components used to edit the values and subclass (InHouse or Outsourced) of the selected part.
+ * */
+
 public class ModifyPart implements Initializable {
 
     Stage stage;
@@ -63,12 +70,23 @@ public class ModifyPart implements Initializable {
     @FXML
     private Button saveButton;
 
+    /*
+    * Event handler that changes the text of the MachineID/Company Name Label on selection of Outsourced radio button
+    *
+    * @param event Outsourced radio button selection event
+    * */
     @FXML
     void onActionCompanyLabel(ActionEvent event) {
 
         machineIDLabel.setText("Company Name");
         machineIDText.clear();
     }
+
+    /*
+     * Event handler that changes the text of the MachineID/Company Name Label on selection of In-House radio button
+     *
+     * @param event In-House radio button selection event
+     * */
     @FXML
     public void onActionMachineLabel(ActionEvent actionEvent) {
 
@@ -76,6 +94,13 @@ public class ModifyPart implements Initializable {
         machineIDText.clear();
     }
 
+    /*
+    * Generic error message method - creates and shows alert based on parameters
+    *
+    * @param title Alert title
+    * @param content Alert text
+    * @param type Alert type
+    * */
     void errorMessage(String title, String content, Alert.AlertType type) {
 
         Alert alert = new Alert(Alert.AlertType.NONE);
@@ -85,11 +110,25 @@ public class ModifyPart implements Initializable {
         alert.showAndWait();
     }
 
+    /*
+    * User input validation for Inventory level, max, and min values
+    *
+    * @param min minimum inventory level
+    * @param max maximum inventory level
+    * @param stock current inventory level
+    *
+    * @return boolean True if min is positive and less than stock, and stock is less than max
+    * */
     boolean checkStockValues(int min, int max, int stock){
 
-        return max > stock && min < stock;
+        return max > stock && min < stock && min >= 1;
     }
 
+    /*
+    * Used to receive data of part to be modified from MainWindow. Sets TextFields and radio button status
+    *
+    * @param part Part to be modified
+    * */
     public void sendPart(Part part){
 
         partIDText.setPromptText(String.valueOf(part.getId()));
@@ -110,6 +149,12 @@ public class ModifyPart implements Initializable {
         }
     }
 
+    /*
+    * Event handler that sets scene back to MainWindow when the cancel button is clicked
+    *
+    * @param event Cancel button event
+    * @throws IOException IOException
+    * */
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
 
@@ -119,6 +164,20 @@ public class ModifyPart implements Initializable {
         stage.setTitle("Inventory Management System");
         stage.show();
     }
+
+    /*
+    * Event handler that checks user input for validity and then updates the part in inventory
+    *
+    * <p><b>
+    * RUNTIME ERROR: Whenever a field wasn't filled out or contained an invalid value (a string value entered into a field intended
+    * for an integer or double), the program was throwing a NumberFormatException. To counter this, I used a try/catch to display
+    * an error message, and not attempt to save the data. Inside that try block, I set up another try/catch with my checkStockValues()
+    * method called to validate the inventory user input and throw an exception if it returns false;
+    * </b></p>
+    *
+    * @param event Save button event
+    * @throws IOException IOException
+    * */
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
         try {
@@ -160,6 +219,12 @@ public class ModifyPart implements Initializable {
         }
     }
 
+    /*
+     * Called when initializing Modify Part scene
+     *
+     * @param url location used to resolve relative paths for the root object, or null
+     * @param resourceBundle resources used to localize root object or null
+     * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 

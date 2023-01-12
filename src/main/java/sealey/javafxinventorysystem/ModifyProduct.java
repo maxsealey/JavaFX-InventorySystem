@@ -98,6 +98,12 @@ public class ModifyProduct implements Initializable {
 
     Product updatedProduct = new Product();
 
+
+    /*
+    * Displays alert asking for confirmation that item should be deleted, returns true if Ok button clicked, false otherwise
+    *
+    * @return boolean true or false
+    * */
     boolean confirmation(){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Confirm Part Removal");
@@ -113,6 +119,11 @@ public class ModifyProduct implements Initializable {
         }
     }
 
+    /*
+    * Simple error message alert that takes in message and displays warning
+    *
+    * @param content Message to be displayed in alert
+    * */
     void errorMessage(String content){
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -121,6 +132,13 @@ public class ModifyProduct implements Initializable {
         alert.showAndWait();
     }
 
+    /*
+    * Overloaded errorMessage method that sets title, content, and alert type
+    *
+    * @param title Alert title
+    * @param content Alert message
+    * @param type Alert type
+    * */
     void errorMessage(String title, String content, Alert.AlertType type) {
 
         Alert alert = new Alert(Alert.AlertType.NONE);
@@ -131,48 +149,12 @@ public class ModifyProduct implements Initializable {
     }
 
     /*
-     * The search() method is a helper function that returns a boolean indicating whether an integer is already being used as an ID number for an existing product.
-     * This is only called in the generateID() method to ensure that the auto-generated ID is unique.
-     *
-     * @param id Integer to be checked for ID uniqueness
-     * @return boolean True if ID belongs to existing product, False otherwise
-     * */
-    private boolean search(int id){
-
-        for(Product p : Inventory.getAllProducts())
-        {
-            if(p.getId() == id){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /*
-     * The generateID() method is a helper function that generates an ID number for created part. Always returns the next unique integer in sequential order
-     *
-     * @return id Integer that is either 1 (if List is empty), or the next unique integer
-     * */
-    private int generateID() {
-
-        int id = 1;
-        for(Part a : Inventory.getAllParts()) {
-            if(search(id)){
-                id++;
-            } else {
-                return id;
-            }
-        }
-        return id;
-    }
-
-    /*
      * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
      *
      * @param str The string to be checked
      * @return boolean Returns true if string is also an integer, false if exception is caught
      */
-    private boolean isInt(String str) {
+    boolean isInt(String str) {
 
         try {
             Integer.valueOf(str);
@@ -180,18 +162,23 @@ public class ModifyProduct implements Initializable {
         } catch (NumberFormatException e) { return false; }
     }
 
+    /*
+     * User input validation for Inventory level, max, and min values
+     *
+     * @param min minimum inventory level
+     * @param max maximum inventory level
+     * @param stock current inventory level
+     *
+     * @return boolean True if min is positive and less than stock, and stock is less than max
+     * */
     boolean checkStockValues(int min, int max, int stock){
 
         return max > stock && min < stock && min >= 1;
     }
 
     /*
-     * The filterParts() method checks a string input (searchPartText TextField)
-     * and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
-     * Returns an ObservableList containing all parts if the TextField is empty. If the search term does not
-     * find any matches, error message is displayed in dialog box.
+     * The filterParts() method checks a string and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
      *
-     * @param search String retrieved from searchPartText
      * @return ObservableList of Parts containing all parts whose name contains the search parameter
      * and/or whose id is equal to the search parameter, or list of all Parts.
      * */
@@ -218,7 +205,12 @@ public class ModifyProduct implements Initializable {
         }
     }
 
-
+    /*
+     * Event handler that sets scene back to MainWindow when the cancel button is clicked
+     *
+             * @param event Cancel button event
+     * @throws IOException IOException
+     * */
     @FXML
     void onActionCancel(ActionEvent event) throws IOException {
 
@@ -227,6 +219,13 @@ public class ModifyProduct implements Initializable {
         stage.setScene(new Scene(scene));
         stage.show();
     }
+
+    /*
+     * Event handler that checks user input for validity and then updates the product in inventory
+     *
+     * @param event Save button event
+     * @throws IOException IOException
+     * */
     @FXML
     void onActionSave(ActionEvent event) throws IOException {
 
@@ -282,6 +281,12 @@ public class ModifyProduct implements Initializable {
         }
     }
 
+    /*
+    * When an item in the top table is selected and the add button is clicked, this event handler will fire and add the item to the bottom table.
+    *
+    * @param event Add button event
+    * @throws IOException IOException
+    * */
     @FXML
     void onActionAdd(ActionEvent event) throws IOException {
 
@@ -292,6 +297,14 @@ public class ModifyProduct implements Initializable {
             errorMessage("Please select a part.");
         }
     }
+
+    /*
+    * If an item on the bottom table is selected and the remove button is clicked, this event
+    * handler will fire and on user confirmation, remove the item from the bottom table.
+    *
+    * @param actionEvent Remove button event
+    * @throws IOException IOException
+    * */
     public void onActionRemove(ActionEvent actionEvent) throws IOException {
 
         boolean success = false;
@@ -317,6 +330,11 @@ public class ModifyProduct implements Initializable {
 
     }
 
+    /*
+     * Used to receive data of product to be modified from MainWindow. Sets TextFields and updatedProduct Product object attributes
+     *
+     * @param product Product to be modified
+     * */
     public void sendProduct(Product product){
 
         updatedProduct.setId(product.getId());
@@ -339,6 +357,12 @@ public class ModifyProduct implements Initializable {
         }
     }
 
+    /*
+    * Populates table1 with data from each of the parts that are passed in. Table1 should always contain a list of the
+    * parts in inventory.
+    *
+    * @param parts List of parts to be represented in each row
+    * */
     private void populateTable1(ObservableList<Part> parts){
 
         table1.setItems(parts);
@@ -349,6 +373,12 @@ public class ModifyProduct implements Initializable {
         table1PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
+    /*
+     * Populates table2 with data from each of the parts that are passed in. Table2 should initially contain the
+     * parts in the unmodified product, and update when parts then are added and removed
+     *
+     * @param parts List of parts to be represented in each row
+     * */
     private void populateTable2(ObservableList<Part> parts) {
 
         table2.setItems(parts);
@@ -359,9 +389,14 @@ public class ModifyProduct implements Initializable {
         table2PriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
     }
 
+    /*
+     * Called when initializing Modify Product scene. Calls populateTable1 and sets up event handler to filter parts in top table based on input value
+     *
+     * @param url location used to resolve relative paths for the root object, or null
+     * @param resourceBundle resources used to localize root object or null
+     * */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        productIDText.setPromptText(String.valueOf(generateID()));
         populateTable1(Inventory.getAllParts());
 
         searchProductText.setOnAction(new EventHandler<ActionEvent>() {

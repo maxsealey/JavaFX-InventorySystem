@@ -6,11 +6,7 @@ import javafx.collections.ObservableList;
 /*
  * @author Max Sealey
  *
- * The Product list contains attributes (and getters/setters) of the product's id number, name,
- * price, stock, minimum number of items that should always be stocked, and
- * the maximum number of items that can be stocked at any given time. It also
- * contains a list of all the parts associated with the product, and methods to
- * add a part, delete a part, and retrieve the entire list.
+ * The Product class contains the attributes of each product, including a list of all associated parts.
  * */
 public class Product {
 
@@ -23,7 +19,7 @@ public class Product {
     private int max;
 
     /*
-    * Product class constructor, called when a Product object is created. Assigns initial values.
+    * Product class constructor, called when a Product object is created. Assigns values.
     * */
     public Product(int id, String name, double price, int stock, int min, int max) {
 
@@ -33,6 +29,10 @@ public class Product {
         this.stock = stock;
         this.min = min;
         this.max = max;
+    }
+
+    public Product(){
+
     }
 
     /**
@@ -140,11 +140,20 @@ public class Product {
     }
 
     /*
+     * @para, associatedParts The entire list of parts associated with the product
+     * */
+    public void setAllAssociatedParts(ObservableList<Part> newPartsList) {
+
+        associatedParts = newPartsList;
+    }
+
+    /*
     * The addAssociatedPart() method takes in a part object and adds it to the list of associated parts.
     *
     * @param part Part object to be added to list
     * */
     public void addAssociatedPart(Part part) {
+
         associatedParts.add(part);
     }
 
