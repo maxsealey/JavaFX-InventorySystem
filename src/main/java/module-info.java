@@ -5,4 +5,5 @@ module sealey.javafxinventorysystem {
     opens sealey.javafxinventorysystem to javafx.fxml;
     opens sealey.javafxinventorysystem.models to javafx.base;
     exports sealey.javafxinventorysystem;
+    opens sealey.javafxinventorysystem.utility to javafx.base;
 }
