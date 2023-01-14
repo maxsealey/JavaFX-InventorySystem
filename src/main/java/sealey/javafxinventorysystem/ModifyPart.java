@@ -13,10 +13,13 @@ import sealey.javafxinventorysystem.models.InHouse;
 import sealey.javafxinventorysystem.models.Inventory;
 import sealey.javafxinventorysystem.models.OutSourced;
 import sealey.javafxinventorysystem.models.Part;
+import sealey.javafxinventorysystem.utility.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 
@@ -94,36 +97,6 @@ public class ModifyPart implements Initializable {
     }
 
     /**
-    * Generic error message method - creates and shows alert based on parameters
-    *
-    * @param title Alert title
-    * @param content Alert text
-    * @param type Alert type
-    * */
-    void errorMessage(String title, String content, Alert.AlertType type) {
-
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setAlertType(type);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    /**
-    * User input validation for Inventory level, max, and min values
-    *
-    * @param min minimum inventory level
-    * @param max maximum inventory level
-    * @param stock current inventory level
-    *
-    * @return boolean True if min is positive and less than stock, and stock is less than max
-    * */
-    boolean checkStockValues(int min, int max, int stock){
-
-        return max > stock && min < stock && min >= 1;
-    }
-
-    /**
     * Used to receive data of part to be modified from MainWindow. Sets TextFields and radio button status
     *
     * @param part Part to be modified
@@ -188,33 +161,37 @@ public class ModifyPart implements Initializable {
             int max = Integer.parseInt(maxText.getText());
 
             try {
-                if(!checkStockValues(min,max,inv)){
+                if(!Helpers.checkStockValues(min,max,inv)){
                     throw new NumberFormatException();
                 } else {
-                    if(inhouseRadio.isSelected()){
-                        InHouse newPart = new InHouse(id,name,price,inv,min,max);
-                        newPart.setMachineId(Integer.parseInt(machineIDText.getText()));
-                        Inventory.updatePart(id - 1,newPart);
-                    } else {
-                        OutSourced newPart = new OutSourced(id,name,price,inv,min,max);
-                        newPart.setCompanyName(machineIDText.getText());
-                        Inventory.updatePart(id - 1,newPart);
-                    }
-                    stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-                    scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
-                    stage.setScene(new Scene(scene));
-                    stage.setTitle("Inventory Management System");
-                    stage.show();
+                    try {
+                        Alert alert = Alerts.confirmSave();
+                        Optional<ButtonType> result = alert.showAndWait();
+
+                        if (result.get() == ButtonType.OK) {
+                            if (inhouseRadio.isSelected()) {
+                                InHouse newPart = new InHouse(id, name, price, inv, min, max);
+                                newPart.setMachineId(Integer.parseInt(machineIDText.getText()));
+                                Inventory.updatePart(id - 1, newPart);
+                            } else {
+                                OutSourced newPart = new OutSourced(id, name, price, inv, min, max);
+                                newPart.setCompanyName(machineIDText.getText());
+                                Inventory.updatePart(id - 1, newPart);
+                            }
+                            stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+                            scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainWindow.fxml")));
+                            stage.setScene(new Scene(scene));
+                            stage.setTitle("Inventory Management System");
+                            stage.show();
+                        }
+                    } catch (NoSuchElementException ignored){}
                 }
             } catch(NumberFormatException e) {
-                errorMessage("Invalid Input","Inventory Level must be between Min and Max", Alert.AlertType.ERROR);
-                errorMessage("Invalid Input","Please enter only valid values in each box. " +
-                        "Inventory Level, Min, Max, and (if applicable) Machine ID must be whole numbers.", Alert.AlertType.ERROR);
+                Alerts.invalidStockValues();
             }
 
         } catch(NumberFormatException e) {
-            errorMessage("Invalid Input","Please enter only valid values the boxes. " +
-                    "Inventory Level, Min, Max, and (if applicable) Machine ID must be whole numbers.", Alert.AlertType.ERROR);
+            Alerts.invalidInput();
         }
     }
 
@@ -225,8 +202,5 @@ public class ModifyPart implements Initializable {
      * @param resourceBundle resources used to localize root object or null
      * */
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        System.out.println("initialized");
-    }
+    public void initialize(URL url, ResourceBundle resourceBundle) {}
 }
