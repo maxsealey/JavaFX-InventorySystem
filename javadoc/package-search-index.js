@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"sealey.javafxinventorysystem"},{"l":"sealey.javafxinventorysystem.models"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"sealey.javafxinventorysystem"},{"l":"sealey.javafxinventorysystem.models"},{"l":"sealey.javafxinventorysystem.utility"}];updateSearchResults();

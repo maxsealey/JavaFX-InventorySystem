@@ -14,12 +14,12 @@ import javafx.stage.Stage;
 import sealey.javafxinventorysystem.models.Inventory;
 import sealey.javafxinventorysystem.models.Part;
 import sealey.javafxinventorysystem.models.Product;
+import sealey.javafxinventorysystem.utility.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -75,128 +75,6 @@ public class MainWindow implements Initializable {
     private TextField searchProductText;
 
     /**
-     * Method displays alert and that sets title, content, and alert type
-     *
-     * @param title Alert title
-     * @param content Alert message
-     * @param type Alert type
-     * */
-    void errorMessage(String title, String content, Alert.AlertType type) {
-
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setAlertType(type);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    /**
-     * couldNotDelete() displays an alert when an item is unable to be deleted. Called in the delete methods
-     *
-     * @param message delete message
-     * */
-    private void couldNotDelete(String message){
-
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Unable to delete");
-        alert.setContentText(message);
-        alert.setHeaderText("Something went wrong.");
-        alert.showAndWait();
-    }
-
-    /**
-     * Displays alert asking for confirmation that item should be deleted, returns true if Ok button clicked, false otherwise
-     *
-     * @return boolean true or false
-     * */
-    private boolean confirmation(){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Confirm Deletion");
-        alert.setContentText("Click 'Ok' to proceed.");
-        alert.setHeaderText("Are you sure you want to delete this item?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.get() == ButtonType.OK) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * The isInt() method checks whether a provided string can be converted to an integer and returns a boolean.
-     *
-     * @param str The string to be checked
-     * @return boolean Returns true if string is also an integer, false if exception is caught
-     */
-    private boolean isInt(String str) {
-
-        try {
-            Integer.valueOf(str);
-            return true;
-        } catch (NumberFormatException e) { return false; }
-    }
-
-    /**
-     * The filterParts() method checks a string and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
-     *
-     * @return ObservableList of Parts containing all parts whose name contains the search parameter
-     * and/or whose id is equal to the search parameter, or list of all Parts.
-     * */
-    private ObservableList<Part> filterParts(){
-
-        String search = searchPartText.getText();
-        ObservableList<Part> temp = Inventory.lookupPart(search);
-
-        if(isInt(search)){
-            Part a = Inventory.lookupPart(Integer.parseInt(search));
-            if(a != null){
-                temp.add(a);
-            }
-        }
-
-        if(search.isEmpty()){
-            return Inventory.getAllParts();
-        }
-        else if (temp.isEmpty()) {
-            errorMessage("404", "Your search did not match the id or name of any parts. Please try again.", Alert.AlertType.INFORMATION);
-            return Inventory.getAllParts();
-        } else {
-            return temp;
-        }
-    }
-
-    /**
-     * The filterProducts() method checks a string and returns a list of Products whose name contains the string, and/or whose ID is equal to the string.
-     *
-     * @return ObservableList of Products containing all products whose name contains the search parameter
-     * and/or whose id is equal to the search parameter, or list of all Products.
-     * */
-    private ObservableList<Product> filterProducts(){
-
-        String search = searchProductText.getText();
-        ObservableList<Product> temp =  Inventory.lookupProduct(search);
-
-        if(isInt(search)){
-            Product a = Inventory.lookupProduct(Integer.parseInt(search));
-            if(a != null){
-                temp.add(a);
-            }
-        }
-
-        if(search.isEmpty()){
-            return Inventory.getAllProducts();
-        }
-        else if (temp.isEmpty()) {
-            errorMessage("404", "Your search did not match the id or name of any parts. Please try again.", Alert.AlertType.INFORMATION);
-            return Inventory.getAllProducts();
-        } else {
-            return temp;
-        }
-    }
-
-    /**
     * The onActionAddPart() event handler sets the AddPart scene when the Add Button under the parts table is clicked.
     *
     * @param event Add button event
@@ -240,15 +118,15 @@ public class MainWindow implements Initializable {
         boolean success = false;
 
         try {
-            if (!partTable.getSelectionModel().isEmpty() && confirmation()) {
+            if (!partTable.getSelectionModel().isEmpty() && Alerts.deleteConfirmation()) {
                 success = Inventory.deletePart(partTable.getSelectionModel().getSelectedItem());
             }
 
             if (!success) {
-                couldNotDelete("We were unable to delete an item. Please try again.");
+                Alerts.couldNotDelete("We were unable to delete an item. Please try again.");
             }
         } catch (NoSuchElementException e) {
-            couldNotDelete("We did not delete the item.");
+            Alerts.couldNotDelete("We did not delete the item.");
         }
     }
 
@@ -264,13 +142,13 @@ public class MainWindow implements Initializable {
         boolean success = false;
         try {
             if(productTable.getSelectionModel().isEmpty()) {
-                couldNotDelete("Please select a product.");
+                Alerts.couldNotDelete("Please select a product.");
                throw new NoSuchElementException();
             } else {
-                if(confirmation() && productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()){
+                if(Alerts.deleteConfirmation() && productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()){
                     success = Inventory.deleteProduct(productTable.getSelectionModel().getSelectedItem());
                 } else if(!productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().isEmpty()){
-                    couldNotDelete("You must remove the parts associated with this product in order to delete it.");
+                    Alerts.couldNotDelete("You must remove the parts associated with this product in order to delete it.");
                     throw new NoSuchElementException();
                 } else {
                     throw new NoSuchElementException();
@@ -290,15 +168,7 @@ public class MainWindow implements Initializable {
     void onActionExit(ActionEvent event) {
 
         try {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Confirm Exit");
-            alert.setHeaderText("Are you sure you want to exit?");
-            alert.setContentText("Changes to your data may not be saved. Click 'Ok' to continue.");
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                System.exit(0);
-            }
+            Alerts.confirmExit();
         } catch (NoSuchElementException e){
             return;
         }
@@ -328,12 +198,8 @@ public class MainWindow implements Initializable {
             stage.setTitle("Modify Part");
             stage.show();
         } catch(NullPointerException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Please select a part.");
-            alert.showAndWait();
+            Alerts.errorMessage("Please select a part.");
         }
-
-
     }
 
     /**
@@ -360,9 +226,7 @@ public class MainWindow implements Initializable {
             stage.setTitle("Modify Product");
             stage.show();
         } catch(NullPointerException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Please select a product.");
-            alert.showAndWait();
+            Alerts.errorMessage("Please select a product.");
         }
     }
 
@@ -374,18 +238,8 @@ public class MainWindow implements Initializable {
     * */
     private void displayData(ObservableList<Part> parts, ObservableList<Product> products) {
 
-        partTable.setItems(parts);
-        productTable.setItems(products);
-
-        partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        partInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        partPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-        productIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        productNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        productInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        Helpers.setPartTables(parts, partTable, partIDCol, partNameCol, partInvCol, partPriceCol);
+        Helpers.setProductTable(products, productTable, productIDCol, productNameCol, productInvCol, productPriceCol);
     }
 
     /**
@@ -403,7 +257,7 @@ public class MainWindow implements Initializable {
         searchPartText.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                displayData(filterParts(), filterProducts());
+                displayData(Helpers.filterParts(searchPartText.getText()), Helpers.filterProducts(searchProductText.getText()));
             }
         });
 
@@ -411,7 +265,7 @@ public class MainWindow implements Initializable {
 
             @Override
             public void handle(ActionEvent actionEvent) {
-                displayData(filterParts(), filterProducts());
+                displayData(Helpers.filterParts(searchPartText.getText()), Helpers.filterProducts(searchProductText.getText()));
             }
         });
     }
