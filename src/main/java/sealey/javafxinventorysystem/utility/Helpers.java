@@ -1,12 +1,11 @@
 package sealey.javafxinventorysystem.utility;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import sealey.javafxinventorysystem.models.Inventory;
-import sealey.javafxinventorysystem.models.Part;
-import sealey.javafxinventorysystem.models.Product;
+import sealey.javafxinventorysystem.models.*;
 
 /**
  * The Helpers class contains a variety of methods used in the controller classes.
@@ -220,6 +219,45 @@ public class Helpers {
         } else {
             return temp;
         }
+    }
+
+    public static void testData() {
+
+        OutSourced part1 = new OutSourced(1, "wheel", 34.99, 16, 5, 30);
+        OutSourced part2 = new OutSourced(2, "brake", 29.99, 18, 10, 25);
+        OutSourced part3 = new OutSourced(3, "headlight", 49.99, 18, 10, 25);
+        InHouse part4 = new InHouse(4, "handlebars", 19.99, 8, 5, 15);
+        InHouse part5 = new InHouse(5, "chain", 64.99, 9, 7, 20);
+        InHouse part6 = new InHouse(6, "steering wheel", 54.99, 9, 7, 20);
+
+        Product prod1 = new Product(1, "Bicycle", 149.99, 12, 8, 20);
+        Product prod2 = new Product(2, "Unicycle", 134.99, 6, 3, 10);
+        Product prod3 = new Product(3, "Kid's Trike", 89.99, 15, 8, 30);
+
+        part1.setCompanyName("Headgum");
+        part2.setCompanyName("OMSB");
+        part3.setCompanyName("Zona Gale");
+        part4.setMachineId(87);
+        part5.setMachineId(32);
+        part6.setMachineId(99);
+
+        prod1.addAssociatedPart(part4);
+        prod1.addAssociatedPart(part3);
+
+        prod2.addAssociatedPart(part3);
+        prod2.addAssociatedPart(part2);
+        prod2.addAssociatedPart(part5);
+        prod3.addAssociatedPart(part2);
+        prod3.addAssociatedPart(part1);
+        prod3.addAssociatedPart(part3);
+        prod3.addAssociatedPart(part5);
+        prod3.addAssociatedPart(part6);
+
+        ObservableList<Part> parts = FXCollections.observableArrayList(part1,part2,part3,part4,part5,part6);
+        Inventory.setAllParts(parts);
+
+        ObservableList<Product> products = FXCollections.observableArrayList(prod1,prod2,prod3);
+        Inventory.setAllProducts(products);
     }
 }
 

@@ -98,35 +98,6 @@ public class AddProduct implements Initializable {
     Product newProduct = new Product();
 
     /**
-     * The filterParts() method checks a string and returns a list of Parts whose name contains the string, and/or whose ID is equal to the string.
-     *
-     * @return ObservableList of Parts containing all parts whose name contains the search parameter
-     * and/or whose id is equal to the search parameter, or list of all Parts.
-     * */
-    ObservableList<Part> filterParts(){
-
-        String search = searchPartText.getText();
-        ObservableList<Part> temp = Inventory.lookupPart(search);
-
-        if(Helpers.isInt(search)){
-            Part a = Inventory.lookupPart(Integer.parseInt(search));
-            if(a != null){
-                temp.add(a);
-            }
-        }
-
-        if(search.isEmpty()){
-            return Inventory.getAllParts();
-        }
-        else if (temp.isEmpty()) {
-            Alerts.genericMessage("404","Your search did not return any results. Please try again.", Alert.AlertType.INFORMATION);
-            return Inventory.getAllParts();
-        } else {
-            return temp;
-        }
-    }
-
-    /**
      * When an item in the top table is selected and the add button is clicked, this event handler will fire and add the item to the bottom table.
      *
      * @param event Add button event
@@ -247,7 +218,7 @@ public class AddProduct implements Initializable {
         searchPartText.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Helpers.setPartTables(filterParts(), table1, table1IDCol, table1NameCol, table1InvCol, table1PriceCol);
+                Helpers.setPartTables(Helpers.filterParts(searchPartText.getText()), table1, table1IDCol, table1NameCol, table1InvCol, table1PriceCol);
             }
         });
     }
